@@ -15,13 +15,19 @@ def load_csv(input_filepath):
     :return: A dictionary representation of the csv file
     """
     # Read the CSV file
-    csv_data = []
+    csv_data = {}
     with open(input_filepath, 'r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
-        # Read each row into the dictionary
-        for row in csv_reader:
-            csv_data.append(row)
+        for index, row in enumerate(csv_reader, start=1):
+            # Create a unique key based on the index or rank
+            key = f"University{index}"
 
+            # Exclude keys with empty names ("")
+            new_row = {key.replace(char, '_'): value for key, value in row.items() if key != "" for char in
+                       ['.', '#', '$', '[', ']', '/']}
+            # Only add the row to the dictionary if it has non-empty keys
+            if new_row:
+                csv_data[key] = new_row
     return csv_data
 
 
