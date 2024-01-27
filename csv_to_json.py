@@ -10,7 +10,8 @@ import json
 
 def load_csv(input_filepath):
     """
-    This function will load a csv from the given file.
+    This function will load a csv from the given file. This additionally cleans the script as necessary for
+    firebase functionality
     :param input_filepath: String, location of the given file
     :return: A dictionary representation of the csv file
     """
@@ -53,4 +54,5 @@ if __name__ == "__main__":
 
     # Save to json
     save_json(data, json_path)
+    print("Data conversion done, please ensure this worked by checking the file")
 
