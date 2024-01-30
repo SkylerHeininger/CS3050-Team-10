@@ -17,7 +17,7 @@ def connect_firebase(key_path, database_url):
     This method connects to the firebase
     :param key_path: Path to the credentials file
     :param database_url: String path to database
-    :return: Nothing but establishes firebase app
+    :return: Null, but establishes firebase app
     """
     cred = credentials.Certificate(key_path)
     firebase_admin.initialize_app(cred, {'databaseURL': database_url})
