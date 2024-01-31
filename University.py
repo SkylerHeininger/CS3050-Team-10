@@ -27,7 +27,7 @@ class University:
         generate_university_str takes a field list argument and returns
         a string that can be used to display specific details about the university.
         """
-        to_return = 'Rank: ' + self.rank + ', '
+        to_return = 'Rank: ' + str(self.rank) + ', '
         to_return += 'Name: ' + self.name + ', '
 
         if 'overall_score' in field_list:
