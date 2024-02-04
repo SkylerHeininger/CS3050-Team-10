@@ -5,7 +5,7 @@ Shared functions between the admin program and the query system.
 """
 
 import firebase_admin
-from firebase_admin import credentials, db
+from firebase_admin import credentials, db, firestore
 import os
 
 
@@ -28,6 +28,17 @@ def firebase_ref_path(reference_path):
     :return: db reference object
     """
     return db.reference(reference_path)
+
+
+def firestore_collection_ref(reference_path):
+    """
+    This creates a firestore collection reference. This is slightly different than the firebase reference path,
+    in use within the API
+    :param reference_path: string, where the firestore is located in firebase.
+    :return: reference object to the collection
+    """
+    database = firestore.client()
+    return database.collection(reference_path)
 
 
 def check_files_exist(file_paths):

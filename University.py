@@ -3,25 +3,55 @@ University.py holds the university class that we will be working with
 The class mostly just holds points of data but does have a non-trivial to_string to help with displaying information
 """
 
+
 class University:
-    def __init__(self, data_list):
-        self.rank = int(data_list[0])
-        self.name = data_list[1]
-        self.overall_score = data_list[2]
-        self.academic_reputation = data_list[3]
-        self.employer_reputation = data_list[4]
-        self.faculty_student_ratio = data_list[5]
-        self.citations_per_faculty = data_list[6]
-        self.international_faculty_ratio = data_list[7]
-        self.international_students_ratio = data_list[8]
-        self.international_research_network = data_list[9]
-        self.employment_outcomes = data_list[10]
-        self.sustainability = data_list[11]
-        self.equal_rank = data_list[12]
-        self.country = data_list[13]
-        self.founding_date = data_list[14]
-        self.student_population = data_list[15]
-        
+    def __init__(self, rank, name, overall_score, academic_reputation, employer_reputation,
+                 faculty_student_ratio, citations_per_faculty, international_faculty_ratio,
+                 international_students_ratio, international_research_network, employment_outcomes,
+                 sustainability, equal_rank, country, founding_date, student_population):
+        self.rank = int(rank)
+        self.name = name
+        self.overall_score = overall_score
+        self.academic_reputation = academic_reputation
+        self.employer_reputation = employer_reputation
+        self.faculty_student_ratio = faculty_student_ratio
+        self.citations_per_faculty = citations_per_faculty
+        self.international_faculty_ratio = international_faculty_ratio
+        self.international_students_ratio = international_students_ratio
+        self.international_research_network = international_research_network
+        self.employment_outcomes = employment_outcomes
+        self.sustainability = sustainability
+        self.equal_rank = equal_rank
+        self.country = country
+        self.founding_date = founding_date
+        self.student_population = student_population
+
+    @staticmethod
+    def from_dict(source):
+        """
+        Creates an instance of this class using a dictionary.
+        :param source: Dictionary of university object
+        :return: University object
+        """
+        return University(
+            source['rank'],
+            source['name'],
+            source['overall_score'],
+            source['academic_reputation'],
+            source['employer_reputation'],
+            source['faculty_student_ratio'],
+            source['citations_per_faculty'],
+            source['international_faculty_ratio'],
+            source['international_students_ratio'],
+            source['international_research_network'],
+            source['employment_outcomes'],
+            source['sustainability'],
+            source['equal_rank'],
+            source['country'],
+            source['founding_date'],
+            source['student_population']
+        )
+
     def generate_university_str(self, field_list) -> str:
         """
         generate_university_str takes a field list argument and returns
@@ -65,33 +95,6 @@ class University:
 
         return to_return
 
-    @classmethod
-    def from_dict(cls, source):
-        """
-        Creates an instance of this class using a dictionary.
-        :param source: Dictionary of source objects
-        :return: University object
-        """
-        data_list = [
-            source['rank'],
-            source['name'],
-            source['overall_score'],
-            source['academic_reputation'],
-            source['employer_reputation'],
-            source['faculty_student_ratio'],
-            source['citations_per_faculty'],
-            source['international_faculty_ratio'],
-            source['international_students_ratio'],
-            source['international_research_network'],
-            source['employment_outcomes'],
-            source['sustainability'],
-            source['equal_rank'],
-            source['country'],
-            source['founding_date'],
-            source['student_population']
-        ]
-        return cls(data_list)
-
     def to_dict(self):
         return {
             'rank': self.rank,
@@ -112,7 +115,6 @@ class University:
             'student_population': self.student_population
         }
 
-        
     def generate_university_str_default(self) -> str:
         """
         generate_university_str_default calls generate_university_str with an empty list
