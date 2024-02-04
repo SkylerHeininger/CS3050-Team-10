@@ -9,6 +9,7 @@ import json
 import sys
 from warmup_utilities import firebase_ref_path, check_files_exist, connect_firebase
 from firebase_admin import credentials, db, firestore
+from University import University
 
 
 def load_data_to_firebase(data_path, reference_path):
@@ -29,9 +30,10 @@ def load_data_to_firebase(data_path, reference_path):
             file_contents = json.load(f)
         # Set each object as a separate document in the specified collection
         for doc_id, uni_data in file_contents.items():
-            # TODO: implement from_dict for university class
+            # from_dict handles the correct data types, so load from that
+            uni = University.from_dict(uni_data)
             doc_ref = datab.collection("universities").document(doc_id)
-            doc_ref.set(uni_data)
+            doc_ref.set(uni.to_dict())
 
         return True
     except Exception as e:

@@ -5,12 +5,12 @@ The class mostly just holds points of data but does have a non-trivial to_string
 
 
 class University:
-    def __init__(self, rank, name, overall_score, academic_reputation, employer_reputation,
+    def __init__(self, rank, university, overall_score, academic_reputation, employer_reputation,
                  faculty_student_ratio, citations_per_faculty, international_faculty_ratio,
                  international_students_ratio, international_research_network, employment_outcomes,
                  sustainability, equal_rank, country, founding_date, student_population):
         self.rank = int(rank)
-        self.name = name
+        self.university = university
         self.overall_score = overall_score
         self.academic_reputation = academic_reputation
         self.employer_reputation = employer_reputation
@@ -33,7 +33,7 @@ class University:
         a string that can be used to display specific details about the university.
         """
         to_return = 'Rank: ' + str(self.rank) + ', '
-        to_return += 'Name: ' + self.name + ', '
+        to_return += 'Name: ' + self.university + ', '
 
         if 'overall_score' in field_list:
             to_return += 'Overall Score: ' + self.overall_score + ', '
@@ -73,7 +73,7 @@ class University:
     def to_dict(self):
         return {
             'rank': self.rank,
-            'name': self.name,
+            'university': self.university,
             'overall_score': self.overall_score,
             'academic_reputation': self.academic_reputation,
             'employer_reputation': self.employer_reputation,
@@ -99,7 +99,7 @@ class University:
         """
         return University(
             int(source['rank']),
-            source['name'],
+            source['university'],
             float(source['overall_score']),
             float(source['academic_reputation']),
             float(source['employer_reputation']),
