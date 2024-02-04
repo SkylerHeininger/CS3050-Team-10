@@ -64,6 +64,54 @@ class University:
         to_return.rstrip(',')
 
         return to_return
+
+    @classmethod
+    def from_dict(cls, source):
+        """
+        Creates an instance of this class using a dictionary.
+        :param source: Dictionary of source objects
+        :return: University object
+        """
+        data_list = [
+            source['rank'],
+            source['name'],
+            source['overall_score'],
+            source['academic_reputation'],
+            source['employer_reputation'],
+            source['faculty_student_ratio'],
+            source['citations_per_faculty'],
+            source['international_faculty_ratio'],
+            source['international_students_ratio'],
+            source['international_research_network'],
+            source['employment_outcomes'],
+            source['sustainability'],
+            source['equal_rank'],
+            source['country'],
+            source['founding_date'],
+            source['student_population']
+        ]
+        return cls(data_list)
+
+    def to_dict(self):
+        return {
+            'rank': self.rank,
+            'name': self.name,
+            'overall_score': self.overall_score,
+            'academic_reputation': self.academic_reputation,
+            'employer_reputation': self.employer_reputation,
+            'faculty_student_ratio': self.faculty_student_ratio,
+            'citations_per_faculty': self.citations_per_faculty,
+            'international_faculty_ratio': self.international_faculty_ratio,
+            'international_students_ratio': self.international_students_ratio,
+            'international_research_network': self.international_research_network,
+            'employment_outcomes': self.employment_outcomes,
+            'sustainability': self.sustainability,
+            'equal_rank': self.equal_rank,
+            'country': self.country,
+            'founding_date': self.founding_date,
+            'student_population': self.student_population
+        }
+
         
     def generate_university_str_default(self) -> str:
         """
