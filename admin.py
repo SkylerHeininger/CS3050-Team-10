@@ -28,7 +28,7 @@ def load_data_to_firebase(data_path, reference_path):
         # Load data from JSON
         with open(data_path, "r") as f:
             file_contents = json.load(f)
-
+        # TODO: fix input to convert to correct types: float, int, etc
         # Set each object as a separate document in the specified collection
         for doc_id, uni_data in file_contents.items():
             # Assume City is a class similar to the one in your template
