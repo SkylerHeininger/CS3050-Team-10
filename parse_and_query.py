@@ -32,7 +32,7 @@ def query_firestore(conditional, firestore):
     filter_cond = FieldFilter(conditional[0], conditional[1], conditional[2])
     # Create a query against the collection
     query_output = firestore.where(filter=filter_cond)
-    print(query_output.stream())
+    print(query_output.stream()) # TODO: fix output from firebase
     return query_output
 
 
