@@ -9,7 +9,6 @@ import json
 import sys
 from warmup_utilities import firebase_ref_path, check_files_exist, connect_firebase
 from firebase_admin import credentials, db, firestore
-import University
 
 
 def load_data_to_firebase(data_path, reference_path):
@@ -28,10 +27,9 @@ def load_data_to_firebase(data_path, reference_path):
         # Load data from JSON
         with open(data_path, "r") as f:
             file_contents = json.load(f)
-        # TODO: fix input to convert to correct types: float, int, etc
         # Set each object as a separate document in the specified collection
         for doc_id, uni_data in file_contents.items():
-            # Assume City is a class similar to the one in your template
+            # TODO: implement from_dict for university class
             doc_ref = datab.collection("universities").document(doc_id)
             doc_ref.set(uni_data)
 

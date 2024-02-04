@@ -26,31 +26,6 @@ class University:
         self.founding_date = founding_date
         self.student_population = student_population
 
-    @staticmethod
-    def from_dict(source):
-        """
-        Creates an instance of this class using a dictionary.
-        :param source: Dictionary of university object
-        :return: University object
-        """
-        return University(
-            source['rank'],
-            source['name'],
-            source['overall_score'],
-            source['academic_reputation'],
-            source['employer_reputation'],
-            source['faculty_student_ratio'],
-            source['citations_per_faculty'],
-            source['international_faculty_ratio'],
-            source['international_students_ratio'],
-            source['international_research_network'],
-            source['employment_outcomes'],
-            source['sustainability'],
-            source['equal_rank'],
-            source['country'],
-            source['founding_date'],
-            source['student_population']
-        )
 
     def generate_university_str(self, field_list) -> str:
         """
@@ -115,9 +90,35 @@ class University:
             'student_population': self.student_population
         }
 
-    def generate_university_str_default(self) -> str:
+    @staticmethod
+    def from_dict(source):
         """
-        generate_university_str_default calls generate_university_str with an empty list
-        to return the default (least detailed) string to describe the university
+        Creates an instance of this class using a dictionary.
+        :param source: Dictionary of university object
+        :return: University object
         """
-        return display_university([])
+        return University(
+            int(source['rank']),
+            source['name'],
+            float(source['overall_score']),
+            float(source['academic_reputation']),
+            float(source['employer_reputation']),
+            float(source['faculty_student_ratio']),
+            float(source['citations_per_faculty']),
+            float(source['international_faculty_ratio']),
+            float(source['international_students_ratio']),
+            float(source['international_research_network']),
+            float(source['employment_outcomes']),
+            float(source['sustainability']),
+            source['equal_rank'],
+            source['country'],
+            source['founding_date'],
+            source['student_population']
+        )
+
+    # def generate_university_str_default(self) -> str:
+    #     """
+    #     generate_university_str_default calls generate_university_str with an empty list
+    #     to return the default (least detailed) string to describe the university
+    #     """
+    #     return display_university([])
