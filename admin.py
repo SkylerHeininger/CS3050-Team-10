@@ -5,45 +5,9 @@ This script will upload data to firebase, ensuring that all files exist and are 
 """
 
 
-import firebase_admin
-from firebase_admin import credentials, db
 import json
 import sys
-import os
-
-
-def connect_firebase(key_path, database_url):
-    """
-    This method connects to the firebase
-    :param key_path: Path to the credentials file
-    :param database_url: String path to database
-    :return: Null, but establishes firebase app
-    """
-    cred = credentials.Certificate(key_path)
-    firebase_admin.initialize_app(cred, {'databaseURL': database_url})
-
-
-def firebase_ref_path(reference_path):
-    """
-    This function establishes what "file" to interact with in the database, and returns the proper object
-    to interact with it
-    :param reference_path: String, the reference path in the database
-    :return: db reference object
-    """
-    return db.reference(reference_path)
-
-
-def check_files_exist(file_paths):
-    """
-    Check if all the provided files exist
-    :param file_paths: List of file paths to check
-    :return: Boolean, true if all files exist and false if not
-    """
-    for file_path in file_paths:
-        if not os.path.exists(file_path):
-            return False
-
-    return True
+from warmup_utilities import firebase_ref_path, check_files_exist, connect_firebase
 
 
 def load_data_to_firebase(data_path, reference_path):
