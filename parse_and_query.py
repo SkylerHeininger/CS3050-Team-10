@@ -15,12 +15,20 @@ from warmup_utilities import firebase_ref_path, check_files_exist, connect_fireb
 import pyparse
 
 
+
 def parse(input_string):
     """
 
     :param input_string:
     :return:
     """
+    # Create pyparse dictionaries
+    valid_conditionals = one_of("== != > < >= <=")
+    valid_fields = one_of("rank university overall_score academic_reputation employer_reputation faculty_student_ratio "
+                          "citations_per_faculty international_faculty_ratio international_students_ratio "
+                          "international_research_network employment_outcomes sustainability equal_rank country "
+                          "founding_date student_population")
+
     # Detect if it is a NAME or SHOW type of query
     if input_string[0, 4].upper == 'NAME':
         is_name = True
@@ -41,7 +49,10 @@ def parse(input_string):
     if 'SORT' in input_string.upper:
         contains_sort = True
 
-    # Start by turning input_string into an array
+    # Okay. Now we know if we have each main keyword.
+    # This will allow us to more easily go through the rest of the process
+
+    # Start by turning input_string into an array?
 
     # Figure out where the start and end of each part of the query are and split array into parts for each section
 
