@@ -12,7 +12,7 @@ from University import University
 
 from warmup_utilities import firebase_ref_path, check_files_exist, connect_firebase, firestore_collection_ref
 
-import pyparse
+import pyparse  # documentation: https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html
 
 
 def parse(input_string):
@@ -27,7 +27,8 @@ def parse(input_string):
                           "citations_per_faculty international_faculty_ratio international_students_ratio "
                           "international_research_network employment_outcomes sustainability equal_rank country "
                           "founding_date student_population")
-
+    
+    # PART 1: detect different keywords that determine what kinds of clauses are in the input string
     # Detect if it is a NAME or SHOW type of query
     if input_string[0, 4].upper == 'NAME':
         is_name = True
@@ -54,6 +55,7 @@ def parse(input_string):
 
     # Okay. Now we know if we have each main keyword.
     # This will allow us to more easily go through the rest of the process
+    # END OF PART 1
 
     # Use pyparse to separate input string into parts
 
