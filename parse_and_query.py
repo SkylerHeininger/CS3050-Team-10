@@ -22,12 +22,24 @@ def parse(input_string):
     :return:
     """
     # Detect if it is a NAME or SHOW type of query
-    if input_string[0,4].upper == 'NAME':
+    if input_string[0, 4].upper == 'NAME':
         is_name = True
-    elif input_string[0,4].upper == 'SHOW':
+    elif input_string[0, 4].upper == 'SHOW':
         is_show = True
     else:
-        return 'Could not detect query type'
+        raise Exception('ERROR IN PARSE: Could not detect query type')
+
+    # Detect if the query has a WHERE clause
+    if 'WHERE' in input_string.upper:
+        contains_where = True
+
+    # Detect if the query has a DISPLAY clause
+    if 'DISPLAY' in input_string.upper:
+        contains_where = True
+
+    # Detect if the query has a SORT clause
+    if 'SORT' in input_string.upper:
+        contains_sort = True
 
     # Start by turning input_string into an array
 
