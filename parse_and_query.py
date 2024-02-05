@@ -15,7 +15,6 @@ from warmup_utilities import firebase_ref_path, check_files_exist, connect_fireb
 import pyparse
 
 
-
 def parse(input_string):
     """
 
@@ -34,8 +33,12 @@ def parse(input_string):
         is_name = True
     elif input_string[0, 4].upper == 'SHOW':
         is_show = True
+    elif input_string[0, 4].upper == 'HELP':
+        is_help = True
+        # TODO: figure out what to do in this situation. I (Ethan R) think we should immediately return and trigger the other function to display the help menu
+        # return 'Help!'
     else:
-        raise Exception('ERROR IN PARSE: Could not detect query type')
+        raise Exception('ERROR IN PARSE: Could not detect query type. Query must start with NAME, SHOW, or HELP')
 
     # Detect if the query has a WHERE clause
     if 'WHERE' in input_string.upper:
@@ -52,13 +55,7 @@ def parse(input_string):
     # Okay. Now we know if we have each main keyword.
     # This will allow us to more easily go through the rest of the process
 
-    # Start by turning input_string into an array?
-
-    # Figure out where the start and end of each part of the query are and split array into parts for each section
-
-    # Check that each (required) part of the query is present
-
-    # If show query, check that fields being applied to conditionals are valid fields
+    # Use pyparse to separate input string into parts
 
     # Process and load first part of return tuple (show_int)
 
