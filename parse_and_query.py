@@ -19,6 +19,24 @@ def parse(input_string):
     :param input_string:
     :return:
     """
+    # Start by turning input_string into an array
+    
+
+    # Figure out where the start and end of each part of the query are and split array into parts for each section
+
+    # Check that each (required) part of the query is present
+
+    # If show query, check that fields being applied to conditionals are valid fields
+
+    # Process and load first part of return tuple (show_int)
+
+    # Process and load second part of return tuple (conditionals)
+
+    # Process and load third part of return tuple (display_list)
+
+    # Process and load last part of return tuple (sort_field)
+
+    # return final tuple
 
 
 def query_firestore(conditional, firestore):
