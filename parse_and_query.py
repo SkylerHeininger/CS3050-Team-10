@@ -12,6 +12,8 @@ from University import University
 
 from warmup_utilities import firebase_ref_path, check_files_exist, connect_firebase, firestore_collection_ref
 
+import pyparse
+
 
 def parse(input_string):
     """
@@ -19,8 +21,15 @@ def parse(input_string):
     :param input_string:
     :return:
     """
+    # Detect if it is a NAME or SHOW type of query
+    if input_string[0,4].upper == 'NAME':
+        is_name = True
+    elif input_string[0,4].upper == 'SHOW':
+        is_show = True
+    else:
+        return 'Could not detect query type'
+
     # Start by turning input_string into an array
-    
 
     # Figure out where the start and end of each part of the query are and split array into parts for each section
 
