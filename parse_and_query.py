@@ -12,7 +12,8 @@ from University import University
 
 from warmup_utilities import firebase_ref_path, check_files_exist, connect_firebase, firestore_collection_ref
 
-import pyparse  # documentation: https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html
+import pyparsing
+from pyparsing import one_of# documentation: https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html
 # https://pyparsing-docs.readthedocs.io/en/latest/HowToUsePyparsing.html
 
 
@@ -111,7 +112,6 @@ def intersect_lists(list1, list2, comparison_func):
     return intersection
 
 
-
 def query_firestore(conditional, firestore):
     """
     This function will query a single thing
@@ -199,12 +199,6 @@ if __name__ == "__main__":
     # Get reference to firebase Universities
     firestore_collection = firestore.client().collection("universities")
 
-    # Testing values
-    conditionals_test = [("rank", "<=", 10), ("academic_reputation", ">=", 1)]
-    # print(firestore_collection.document("University1").get().to_dict())
-    print(query_engine(conditionals_test, firestore_collection))
-
-    sys.exit()
     # Loop to query user until they exit
     query_string = ""
     while query_string != "exit":
