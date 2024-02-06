@@ -112,7 +112,7 @@ class University:
             float(source['sustainability']),
             source['equal_rank'],
             source['country'],
-            source['founding_date'],
+            int(source['founding_date']),
             source['student_population']
         )
 

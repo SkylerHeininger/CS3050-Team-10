@@ -13,7 +13,7 @@ from University import University
 from warmup_utilities import firebase_ref_path, check_files_exist, connect_firebase, firestore_collection_ref
 
 import pyparsing
-from pyparsing import one_of# documentation: https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html
+from pyparsing import one_of # documentation: https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html
 # https://pyparsing-docs.readthedocs.io/en/latest/HowToUsePyparsing.html
 
 
