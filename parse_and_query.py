@@ -13,6 +13,7 @@ from University import University
 from warmup_utilities import firebase_ref_path, check_files_exist, connect_firebase, firestore_collection_ref
 
 import pyparse  # documentation: https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html
+# https://pyparsing-docs.readthedocs.io/en/latest/HowToUsePyparsing.html
 
 
 def parse(input_string):
@@ -37,7 +38,7 @@ def parse(input_string):
     elif input_string[0, 4].upper == 'HELP':
         is_help = True
         # TODO: figure out what to do in this situation. I (Ethan R) think we should immediately return and trigger the other function to display the help menu
-        # return 'Help!'
+        # return ('Help!')
     else:
         raise Exception('ERROR IN PARSE: Could not detect query type. Query must start with NAME, SHOW, or HELP')
 
