@@ -186,6 +186,52 @@ def query_engine(conditionals, firestore):
     return universities
 
 
+def merge_sort_universities(universities_list, field):
+    """
+    This function will apply the merge sort algorithm over the universities list to sort them appropriately.
+    This used the following merge sort implementation as a reference: https://www.geeksforgeeks.org/merge-sort/
+    :param universities_list: List of university objects
+    :param field: Field over which to sort
+    :return: Sorted list of university objects
+    """
+    # TODO: test this function to ensure functionality
+    if len(universities_list) > 1:
+        # Find middle of array
+        middle = len(universities_list) // 2
+        # Divide the array into two sides
+        left = universities_list[:middle]
+        right = universities_list[middle:]
+
+        # Sort the halves
+        merge_sort_universities(left, field)
+        merge_sort_universities(right, field)
+
+        # Initialize sorting variables
+        i = j = k = 0
+        # Copy data to temp arrays L[] and R[]
+        while i < len(left) and j < len(right):
+            if University.compare_universities_field(left[i], right[j], field) < 0:
+                universities_list[k] = left[i]
+                i += 1
+            else:
+                universities_list[k] = right[j]
+                j += 1
+            k += 1
+
+        # Checking if any element was left
+        while i < len(left):
+            universities_list[k] = left[i]
+            i += 1
+            k += 1
+
+        while j < len(right):
+            universities_list[k] = right[j]
+            j += 1
+            k += 1
+
+
+
+
 if __name__ == "__main__":
     # Initialize firebase app, making sure that firebase certification is present
     # This is done before the user starts querying since throwing this error later would be a worse user experience
