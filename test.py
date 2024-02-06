@@ -19,6 +19,8 @@ def test_query_engine():
     This method is present for testing the query engine
     :return: true or false, true if passed all test cases
     """
+    print("Testing query engine")
+
     amount_failed = 0
     amount_passed = 0
     number_of_cases = 5
