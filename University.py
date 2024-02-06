@@ -117,7 +117,7 @@ class University:
         )
 
     @staticmethod
-    def compare_universities(university1, university2):
+    def compare_universities_equivalence(university1, university2):
         """
         Compares two university objects for equality in all fields.
         :param university1: First University object
@@ -141,7 +141,41 @@ class University:
                 university1.founding_date == university2.founding_date and
                 university1.student_population == university2.student_population)
 
+    @staticmethod
+    def compare_universities_field(university1, university2, field):
+        """
+        This function will compare two university objects by the specified field. This will return
+        -1 if the first is less than the second, 0 if equal, and 1 if the first is greater than the second.
+        This function is for sorting purposes only. If the field is a string, these will be compared lexicographically.
+        Equal objects will also be compared lexicographically by their university name.
+        :param university1: University object
+        :param university2: University object
+        :param field: Field parameter
+        :return: 1, 0, -1
+        """
+        # Convert to dicts, easier accessing fields
+        dict_repr_1 = university1.to_dict()
+        dict_repr_2 = university2.to_dict()
 
+        # Access values and names
+        val_1 = dict_repr_1[field]
+        val_2 = dict_repr_2[field]
+        name_1 = dict_repr_1["name"]
+        name_2 = dict_repr_2["name"]
+
+        # Compare (in python <, > compare lexicographically)
+        if val_1 < val_2:
+            return -1
+        elif val_1 > val_2:
+            return 1
+        else:
+            # Values equal, compare names
+            if name_1 < name_2:
+                return -1
+            elif name_1 > name_2:
+                return 1
+            else:
+                return 0
 
     # def generate_university_str_default(self) -> str:
     #     """

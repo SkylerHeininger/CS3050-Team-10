@@ -153,7 +153,7 @@ def query_engine(conditionals, firestore):
         while len(query_result_list) >= 1:
             # Take another item and intersect it with the original list, use the University comparison function
             query_intersect = intersect_lists(query_intersect, query_result_list.pop(0),
-                                              University.compare_universities)
+                                              University.compare_universities_equivalence)
 
         return query_intersect
     else:
