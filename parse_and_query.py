@@ -94,6 +94,24 @@ def parse(input_string):
     # return final tuple
 
 
+def intersect_lists(list1, list2, comparison_func):
+    """
+    Compares two lists of university objects using the given comparison function and finds their intersection.
+    :param list1: First list of University objects
+    :param list2: Second list of University objects
+    :param comparison_func: Function to compare two university objects, must return true or false
+    :return: Intersection of the two lists based on the comparison function
+    """
+    intersection = []
+    for uni1 in list1:
+        for uni2 in list2:
+            if comparison_func(uni1, uni2):
+                intersection.append(uni1)
+                break
+    return intersection
+
+
+
 def query_firestore(conditional, firestore):
     """
     This function will query a single thing
@@ -116,6 +134,33 @@ def query_engine(conditionals, firestore):
     :param firestore: reference path to firebase over which queries will be performed
     :return: List of University objects
     """
+    #
+    query_result_list = []
+    for conditional in conditionals:
+        # Query using conditional
+
+        # Run .get (also need to run .to_dict on this and then pass that to University.from_dict on each item in the
+        # list to get University objects for everything. I highlighted below how to do this
+
+        # Append to query_result_list
+
+
+    # At this point, query_result_list is like the following: [[object1, object2, object3,...], [...], ...]
+    # Loop through and take the first list, compare with the rest of things in list.
+    if len(query_result_list) >= 1:
+        # Take the first item in the query list(the first thing)
+        query_intersect = query_result_list.pop(0)
+        while len(query_result_list) >= 1:
+            # Take another item and intersect it with the original list, use the University comparison function
+            query_intersect = intersect_lists(query_intersect, query_result_list.pop(0),
+                                              University.compare_universities)
+
+        return query_intersect
+    else:
+        # There were no queries performed
+        return False
+
+    ''' Old code '''
     # Need to query the firestore multiple times using the .where
     # Query the first thing in conditionals
     query_compound = query_firestore(conditionals.pop(0), firestore)
@@ -133,7 +178,10 @@ def query_engine(conditionals, firestore):
     universities = []
     for doc in query_documents:
         print(doc)
+        # TODO: Mason, this is what I meant by above comment, you have to loop through the query documents
+        # and create objects for each thing
         universities.append(University.from_dict(doc.to_dict()))
+        print(University.from_dict(doc.to_dict()).generate_university_str([]))
 
     return universities
 
@@ -152,9 +200,9 @@ if __name__ == "__main__":
     firestore_collection = firestore.client().collection("universities")
 
     # Testing values
-    conditionals = [("rank", "<=", 10)]
+    conditionals_test = [("rank", "<=", 10), ("academic_reputation", ">=", 1)]
     # print(firestore_collection.document("University1").get().to_dict())
-    print(query_engine(conditionals, firestore_collection))
+    print(query_engine(conditionals_test, firestore_collection))
 
     sys.exit()
     # Loop to query user until they exit

@@ -116,9 +116,39 @@ class University:
             source['student_population']
         )
 
+    @staticmethod
+    def compare_universities(university1, university2):
+        """
+        Compares two university objects for equality in all fields.
+        :param university1: First University object
+        :param university2: Second University object
+        :return: Boolean true if all fields are equivalent, false if anything is not equivalent.
+        """
+        return (university1.rank == university2.rank and
+                university1.university == university2.university and
+                university1.overall_score == university2.overall_score and
+                university1.academic_reputation == university2.academic_reputation and
+                university1.employer_reputation == university2.employer_reputation and
+                university1.faculty_student_ratio == university2.faculty_student_ratio and
+                university1.citations_per_faculty == university2.citations_per_faculty and
+                university1.international_faculty_ratio == university2.international_faculty_ratio and
+                university1.international_students_ratio == university2.international_students_ratio and
+                university1.international_research_network == university2.international_research_network and
+                university1.employment_outcomes == university2.employment_outcomes and
+                university1.sustainability == university2.sustainability and
+                university1.equal_rank == university2.equal_rank and
+                university1.country == university2.country and
+                university1.founding_date == university2.founding_date and
+                university1.student_population == university2.student_population)
+
+
+
     # def generate_university_str_default(self) -> str:
     #     """
     #     generate_university_str_default calls generate_university_str with an empty list
     #     to return the default (least detailed) string to describe the university
     #     """
     #     return display_university([])
+
+
+
