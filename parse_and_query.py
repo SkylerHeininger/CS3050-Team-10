@@ -28,6 +28,10 @@ def parse(input_string):
                           "citations_per_faculty international_faculty_ratio international_students_ratio "
                           "international_research_network employment_outcomes sustainability equal_rank country "
                           "founding_date student_population")
+
+    where_index = 10000
+    display_index = 100000
+    sort_index = 100000
     
     # PART 1: detect different keywords that determine what kinds of clauses are in the input string
     # Detect if it is a NAME or SHOW type of query
@@ -35,28 +39,47 @@ def parse(input_string):
         is_name = True
     elif input_string[0, 4].upper == 'SHOW':
         is_show = True
-    elif input_string[0, 4].upper == 'HELP':
-        is_help = True
-        # TODO: figure out what to do in this situation. I (Ethan R) think we should immediately return and trigger the other function to display the help menu
-        # return ('Help!')
     else:
         raise Exception('ERROR IN PARSE: Could not detect query type. Query must start with NAME, SHOW, or HELP')
 
     # Detect if the query has a WHERE clause
     if 'WHERE' in input_string.upper:
         contains_where = True
+        where_index = input_string.upper('WHERE')
+    else:
+        contains_where = False
 
     # Detect if the query has a DISPLAY clause
     if 'DISPLAY' in input_string.upper:
-        contains_where = True
+        contains_display = True
+        display_index = input_string.upper('DISPLAY')
+    else:
+        contains_display = False
 
     # Detect if the query has a SORT clause
     if 'SORT' in input_string.upper:
         contains_sort = True
+        sort_index = input_string.upper('SORT')
+    else:
+        contains_sort = False
 
     # Okay. Now we know if we have each main keyword.
     # This will allow us to more easily go through the rest of the process
     # END OF PART 1
+
+    # Check to make sure the keywords are in the correct order. Further, we know that SHOW or NAME is the first so we don't have to check that
+    if contains_where and contains_display and (where_index > display_index):
+        # display comes before where which is out of order :(
+        raise Exception('ERROR IN PARSE: Where clause comes after display clause.')
+    if contains_where and contains_sort and (where_index > sort_index):
+        # sort comes before where which is out of order :(
+        raise Exception('ERROR IN PARSE: Where clause comes after sort clause.')
+    if contains_display and contains_sort and (display_index > sort_index):
+        # sort comes before display which is out of order :(
+        raise Exception('ERROR IN PARSE: Display clause comes after sort clause.')
+
+
+
 
     # Use pyparse to separate input string into parts
 
