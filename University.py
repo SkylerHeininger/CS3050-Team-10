@@ -26,7 +26,6 @@ class University:
         self.founding_date = founding_date
         self.student_population = student_population
 
-
     def generate_university_str(self, field_list) -> str:
         """
         generate_university_str takes a field list argument and returns
@@ -97,6 +96,10 @@ class University:
         :param source: Dictionary of university object
         :return: University object
         """
+        if not source['equal_rank']:
+            source['equal_rank'] = False
+        else:
+            source['equal_rank'] = True
         return University(
             int(source['rank']),
             source['university'],
