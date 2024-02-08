@@ -96,6 +96,7 @@ class University:
         :param source: Dictionary of university object
         :return: University object
         """
+        # Handling for optional field, convert the empty string of no input to False, otherwise True
         if not source['equal_rank']:
             source['equal_rank'] = False
         else:

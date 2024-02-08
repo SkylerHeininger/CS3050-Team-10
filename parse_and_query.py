@@ -193,7 +193,6 @@ def query_engine(conditionals, firestore):
 
         # Append to query_result_list
 
-
     # At this point, query_result_list is like the following: [[object1, object2, object3,...], [...], ...]
     # Loop through and take the first list, compare with the rest of things in list.
     if len(query_result_list) >= 1:
@@ -290,7 +289,6 @@ if __name__ == "__main__":
 
     # Establish connection with firebase
     connect_firebase("firebase_cert.json", "https://cs3050-10-default-rtdb.firebaseio.com/")
-
     # Get reference to firebase Universities
     firestore_collection = firestore_collection_ref("universities")
 
