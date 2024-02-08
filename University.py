@@ -69,6 +69,13 @@ class University:
 
         return to_return
 
+    def generate_university_str_default(self) -> str:
+        """
+        generate_university_str_default calls generate_university_str with an empty list
+        to return the default (least detailed) string to describe the university
+        """
+        return self.generate_university_str([])
+
     def to_dict(self):
         return {
             'rank': self.rank,
@@ -181,12 +188,6 @@ class University:
             else:
                 return 0
 
-    # def generate_university_str_default(self) -> str:
-    #     """
-    #     generate_university_str_default calls generate_university_str with an empty list
-    #     to return the default (least detailed) string to describe the university
-    #     """
-    #     return display_university([])
 
 
 
