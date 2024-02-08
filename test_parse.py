@@ -125,7 +125,7 @@ def parse(input_string):
     show_int = (str(query_dict['name_or_show_phrase']).strip()).upper()
     if is_show:
         try:
-            name_show = int(show_int)
+            show_int = int(show_int)
         except:
             raise Exception("Invalid input")
     print(show_int)
