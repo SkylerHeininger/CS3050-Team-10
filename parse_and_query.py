@@ -13,7 +13,9 @@ from University import University
 from warmup_utilities import check_files_exist, connect_firebase, firestore_collection_ref
 
 import pyparsing
-from pyparsing import one_of # documentation: https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html
+from pyparsing import one_of  # documentation: https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html
+
+
 # https://pyparsing-docs.readthedocs.io/en/latest/HowToUsePyparsing.html
 
 
@@ -85,15 +87,10 @@ def parse(input_string):
 
     # Use separate input string into parts of query
     # first do part 1
-    if is_name:
-        # is a name type
-        # this is the last character the part_1 substring should go to
-        end_index = min(where_index, display_index, sort_index, len(input_string))
-        query_part_1 = input_string[0: end_index]
-    else:
-        # is a show-type
-        end_index = min(where_index, display_index, sort_index, len(input_string))
-        query_part_1 = input_string[0: end_index]
+    # ???? does same thing if name or show
+
+    end_index = min(where_index, display_index, sort_index, len(input_string))
+    query_part_1 = input_string[0: end_index]
 
     # now do WHERE section
     if contains_where:
@@ -122,7 +119,7 @@ def parse(input_string):
     # pack into dict
     query_dict = {'name_or_show_phrase': query_part_1, 'where_phrase': query_part_2, 'display_phrase': query_part_3,
                   'sort_phrase': query_part_4}
-    print(query_dict)
+    #print(query_dict)
     # remove the start of part keywords from the query_dict
     query_dict['name_or_show_phrase'] = query_dict['name_or_show_phrase'][len('SHOW'):]
     if query_dict['where_phrase'] != '':
@@ -131,9 +128,16 @@ def parse(input_string):
         query_dict['display_phrase'] = query_dict['display_phrase'][len('DISPLAY'):]
     if query_dict['sort_phrase'] != '':
         query_dict['sort_phrase'] = query_dict['sort_phrase'][len('SORT'):]
-    print(query_dict)
+    #print(query_dict)
 
     # Process and load first part of return tuple (show_int)
+    name_show = (str(query_dict['name_or_show_phrase']).strip()).upper()
+    if is_show:
+        try:
+            name_show = int(name_show)
+        except:
+            raise Exception("Invalid input")
+    print
 
     # Process and load second part of return tuple (conditionals)
 

@@ -122,6 +122,14 @@ def parse(input_string):
     print(query_dict)
 
     # Process and load first part of return tuple (show_int)
+    show_int = (str(query_dict['name_or_show_phrase']).strip()).upper()
+    if is_show:
+        try:
+            name_show = int(show_int)
+        except:
+            raise Exception("Invalid input")
+    print(show_int)
+
 
     # Process and load second part of return tuple (conditionals)
 
