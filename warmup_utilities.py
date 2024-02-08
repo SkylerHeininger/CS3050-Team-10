@@ -20,20 +20,9 @@ def connect_firebase(key_path, database_url):
     firebase_admin.initialize_app(cred, {'databaseURL': database_url})
 
 
-def firebase_ref_path(reference_path):
-    """
-    This function establishes what "file" to interact with in the database, and returns the proper object
-    to interact with it
-    :param reference_path: String, the reference path in the database
-    :return: db reference object
-    """
-    return db.reference(reference_path)
-
-
 def firestore_collection_ref(reference_path):
     """
-    This creates a firestore collection reference. This is slightly different than the firebase reference path,
-    in use within the API
+    This creates a firestore collection reference. This will be used to query the datastore.
     :param reference_path: string, where the firestore is located in firebase.
     :return: reference object to the collection
     """

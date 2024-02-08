@@ -10,7 +10,7 @@ import sys
 from google.cloud.firestore_v1 import FieldFilter
 from University import University
 
-from warmup_utilities import firebase_ref_path, check_files_exist, connect_firebase, firestore_collection_ref
+from warmup_utilities import check_files_exist, connect_firebase, firestore_collection_ref
 
 import pyparsing
 from pyparsing import one_of # documentation: https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html
@@ -144,6 +144,7 @@ def parse(input_string):
     # return final tuple
     pass
 
+
 def intersect_lists(list1, list2, comparison_func):
     """
     Compares two lists of university objects using the given comparison function and finds their intersection.
@@ -167,7 +168,6 @@ def query_firestore(conditional, firestore):
     :param conditional: tuple of size 3, with field, operator, conditional
     :return: The query object for a single conditional
     """
-    print(conditional)
     # Filter for the conditional
     filter_cond = FieldFilter(conditional[0], conditional[1], conditional[2])
     # Create a query against the collection
@@ -187,7 +187,7 @@ def query_engine(conditionals, firestore):
     query_result_list = []
     for conditional in conditionals:
         # Query using conditional
-
+        pass
         # Run .get (also need to run .to_dict on this and then pass that to University.from_dict on each item in the
         # list to get University objects for everything. I highlighted below how to do this
 
@@ -292,7 +292,7 @@ if __name__ == "__main__":
     connect_firebase("firebase_cert.json", "https://cs3050-10-default-rtdb.firebaseio.com/")
 
     # Get reference to firebase Universities
-    firestore_collection = firestore.client().collection("universities")
+    firestore_collection = firestore_collection_ref("universities")
 
     # Loop to query user until they exit
     query_string = ""
