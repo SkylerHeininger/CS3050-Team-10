@@ -299,7 +299,19 @@ def sorting_engine(universities_list, ranking_field, show_int):
     elif show_int < 0:
         return universities_sorted[:show_int]
     else:
+        # return an empty list if a show_int of 0 is provided
         return []
+
+
+def print_results(universities_list, display_fields):
+    """
+    This function prints the the results of the query.
+    :param universities_list: The queried and sorted list of University objects
+    :param display_fields: The fields to display
+    :return: True if all printing occurred successfully, false otherwise
+    """
+    for university in universities_list:
+        print(university.generate_university_str(display_fields))
 
 
 if __name__ == "__main__":
