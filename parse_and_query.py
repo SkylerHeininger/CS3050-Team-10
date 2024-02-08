@@ -251,8 +251,8 @@ def merge_sort_universities(universities_list, field):
         right = universities_list[middle:]
 
         # Sort the halves
-        merge_sort_universities(left, field)
-        merge_sort_universities(right, field)
+        left = merge_sort_universities(left, field)
+        right = merge_sort_universities(right, field)
 
         # Initialize sorting variables
         i = j = k = 0
@@ -277,7 +277,29 @@ def merge_sort_universities(universities_list, field):
             j += 1
             k += 1
 
+    return universities_list
 
+
+def sorting_engine(universities_list, ranking_field, show_int):
+    """
+    This function will call the merge_sort_universities function and sort the given list of University
+    objects using the inputted field as the method of sorting.
+    :param universities_list: List of University objects
+    :param ranking_field: the field over which to sort
+    :param show_int: The number of universities to return, if positive, the highest amount, if negative the least amount
+    :return: List of universities of size show_int
+    """
+    # Sort the universities
+    universities_sorted = merge_sort_universities(universities_list, ranking_field)
+
+    # Select the show_int amount of things, in descending order if show_int is positive
+    # and ascending order if n is negative
+    if show_int > 0:
+        return universities_sorted[-show_int:]
+    elif show_int < 0:
+        return universities_sorted[:show_int]
+    else:
+        return []
 
 
 if __name__ == "__main__":

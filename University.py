@@ -117,7 +117,7 @@ class University:
             source['equal_rank'],
             source['country'],
             int(source['founding_date']),
-            source['student_population']
+            int(source['student_population'])
         )
 
     @staticmethod
