@@ -134,10 +134,27 @@ def query_engine(conditionals, firestore):
     :param firestore: reference path to firebase over which queries will be performed
     :return: List of University objects
     """
-    #
+
     query_result_list = []
     for conditional in conditionals:
-        # Query using conditional
+
+        # Create list to store docs queried for nth conditional in conditionals
+        query_results = []
+
+        # Query using nth conditional
+        for doc in firestore.where(conditional).stream():
+
+            # # Convert document into Uni object (???)
+            # university_object = doc.from_dict(doc.to_dict())
+            #
+            # # Append university_object to query_results
+            # query_results.append(university_object)
+
+            query_results.append(University.from_dict(doc.to_dict()))
+
+        # Append query_results list to query_result_list, repeat process if there is more than one conditional
+        query_result_list.append(query_results)
+
 
         # Run .get (also need to run .to_dict on this and then pass that to University.from_dict on each item in the
         # list to get University objects for everything. I highlighted below how to do this
@@ -154,6 +171,8 @@ def query_engine(conditionals, firestore):
             # Take another item and intersect it with the original list, use the University comparison function
             query_intersect = intersect_lists(query_intersect, query_result_list.pop(0),
                                               University.compare_universities_equivalence)
+
+
 
         return query_intersect
     else:
