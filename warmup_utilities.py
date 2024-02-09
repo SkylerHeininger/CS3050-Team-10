@@ -3,42 +3,52 @@ CS 3010 Team 10
 Warmup project
 Shared functions between the admin program and the query system.
 """
+import sys
 
 import firebase_admin
 from firebase_admin import credentials, db, firestore
+from firebase_admin.exceptions import NotFoundError
 import os
 
 
 def connect_firebase(key_path, database_url):
     """
-    This method connects to the firebase
+    This method connects to the firebase. This has a hard stop to the program if the firebase is not
+    connected to, as this is a un-recoverable issue. Since this is hard-coded into the warmup
+     project, this does not depend on user input and is more an overall code clean-up strategy.
     :param key_path: Path to the credentials file
     :param database_url: String path to database
     :return: Null, but establishes firebase app
     """
-    cred = credentials.Certificate(key_path)
-    firebase_admin.initialize_app(cred, {'databaseURL': database_url})
-
-
-def firebase_ref_path(reference_path):
-    """
-    This function establishes what "file" to interact with in the database, and returns the proper object
-    to interact with it
-    :param reference_path: String, the reference path in the database
-    :return: db reference object
-    """
-    return db.reference(reference_path)
+    try:
+        cred = credentials.Certificate(key_path)
+    except:
+        print("Please ensure that your firebase certificate is in the correct location.")
+        sys.exit(1)
+    try:
+        firebase_admin.initialize_app(cred, {'databaseURL': database_url})
+    except:
+        print("Please ensure that the database url is correct, then try again.")
+        sys.exit(1)
 
 
 def firestore_collection_ref(reference_path):
     """
-    This creates a firestore collection reference. This is slightly different than the firebase reference path,
-    in use within the API
+    This creates a firestore collection reference. This will be used to query the datastore.
+    This method will fail if the reference path is not correct. Since this is hard-coded
+    into the warmup project, this does not depend on user input and is more an overall code clean-up strategy.
     :param reference_path: string, where the firestore is located in firebase.
     :return: reference object to the collection
     """
-    database = firestore.client()
-    return database.collection(reference_path)
+    try:
+        database = firestore.client()
+        return database.collection(reference_path)
+    except NotFoundError:
+        print("The supplied reference path was not found, please try again.")
+        sys.exit(1)
+    except:
+        print("An error occurred, please try again.")
+        sys.exit(1)
 
 
 def check_files_exist(file_paths):

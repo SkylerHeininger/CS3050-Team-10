@@ -11,7 +11,8 @@ from google.cloud.firestore_v1 import FieldFilter
 import pyparsing
 
 from University import University
-from warmup_utilities import firebase_ref_path, check_files_exist, connect_firebase, firestore_collection_ref
+from warmup_utilities import check_files_exist, connect_firebase, firestore_collection_ref
+
 
 
 def test_query_engine():

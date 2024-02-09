@@ -7,7 +7,7 @@ This script will upload data to firebase, ensuring that all files exist and are 
 
 import json
 import sys
-from warmup_utilities import firebase_ref_path, check_files_exist, connect_firebase
+from warmup_utilities import check_files_exist, connect_firebase, firestore_collection_ref
 from firebase_admin import credentials, db, firestore
 from University import University
 
@@ -20,7 +20,7 @@ def load_data_to_firebase(data_path, reference_path):
     :return: Boolean, true if worked
     """
     # Create database reference
-    datab = firestore.client()
+    datab = firestore_collection_ref("universities")
 
     # Some basic error handling for firebase
     try:
@@ -32,7 +32,7 @@ def load_data_to_firebase(data_path, reference_path):
         for doc_id, uni_data in file_contents.items():
             # from_dict handles the correct data types, so load from that
             uni = University.from_dict(uni_data)
-            doc_ref = datab.collection("universities").document(doc_id)
+            doc_ref = datab.document(doc_id)
             doc_ref.set(uni.to_dict())
 
         return True

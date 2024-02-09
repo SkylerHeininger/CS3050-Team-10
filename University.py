@@ -2,7 +2,7 @@
 University.py holds the university class that we will be working with
 The class mostly just holds points of data but does have a non-trivial to_string to help with displaying information
 """
-
+import sys
 
 class University:
     def __init__(self, rank, university, overall_score, academic_reputation, employer_reputation,
@@ -25,7 +25,6 @@ class University:
         self.country = country
         self.founding_date = founding_date
         self.student_population = student_population
-
 
     def generate_university_str(self, field_list) -> str:
         """
@@ -56,7 +55,10 @@ class University:
         if 'sustainability' in field_list:
             to_return += 'Sustainability: ' + self.sustainability + ', '
         if 'equal_rank' in field_list:
-            to_return += 'Equal Rank Flag: ' + self.equal_rank + ', '
+            if self.equal_rank:
+                to_return += f'Tied in rank at position {self.rank}, '
+            else:
+                to_return += f'Not tied in ranking, '
         if 'country' in field_list:
             to_return += 'Country: ' + self.country + ', '
         if 'founding_date' in field_list:
@@ -69,6 +71,13 @@ class University:
         to_return.rstrip(',')
 
         return to_return
+
+    def generate_university_str_default(self) -> str:
+        """
+        generate_university_str_default calls generate_university_str with an empty list
+        to return the default (least detailed) string to describe the university
+        """
+        return self.generate_university_str([])
 
     def to_dict(self):
         return {
@@ -93,28 +102,43 @@ class University:
     @staticmethod
     def from_dict(source):
         """
-        Creates an instance of this class using a dictionary.
+        Creates an instance of this class using a dictionary. This also includes some exception
+        handling for the conversions, where there could be possible errors. This will exit the program
+        if an exception is raised, as this will likely be due to errors in json data or the firestore, and
+        not the user.
         :param source: Dictionary of university object
         :return: University object
         """
-        return University(
-            int(source['rank']),
-            source['university'],
-            float(source['overall_score']),
-            float(source['academic_reputation']),
-            float(source['employer_reputation']),
-            float(source['faculty_student_ratio']),
-            float(source['citations_per_faculty']),
-            float(source['international_faculty_ratio']),
-            float(source['international_students_ratio']),
-            float(source['international_research_network']),
-            float(source['employment_outcomes']),
-            float(source['sustainability']),
-            source['equal_rank'],
-            source['country'],
-            int(source['founding_date']),
-            source['student_population']
-        )
+        # Handling for optional field, convert the empty string of no input to False, otherwise True
+        if not source['equal_rank']:
+            source['equal_rank'] = False
+        else:
+            source['equal_rank'] = True
+        try:
+            return University(
+                int(source['rank']),
+                source['university'],
+                float(source['overall_score']),
+                float(source['academic_reputation']),
+                float(source['employer_reputation']),
+                float(source['faculty_student_ratio']),
+                float(source['citations_per_faculty']),
+                float(source['international_faculty_ratio']),
+                float(source['international_students_ratio']),
+                float(source['international_research_network']),
+                float(source['employment_outcomes']),
+                float(source['sustainability']),
+                source['equal_rank'],
+                source['country'],
+                int(source['founding_date']),
+                int(source['student_population'])
+            )
+        except ValueError:
+            print("Type conversion failed, try again.")
+            sys.exit(1)
+        except TypeError:
+            print("Type error when creating University object, try again.")
+            sys.exit(1)
 
     @staticmethod
     def compare_universities_equivalence(university1, university2):
@@ -158,8 +182,14 @@ class University:
         dict_repr_2 = university2.to_dict()
 
         # Access values and names
-        val_1 = dict_repr_1[field]
-        val_2 = dict_repr_2[field]
+        # This try clause is really here for testing, to ensure that only the correct fields are passed
+        # to the query engine. In practice, this won't be thrown.
+        try:
+            val_1 = dict_repr_1[field]
+            val_2 = dict_repr_2[field]
+        except KeyError:
+            print("Invalid key entered, try again.")
+            sys.exit()
         name_1 = dict_repr_1["name"]
         name_2 = dict_repr_2["name"]
 
@@ -177,12 +207,6 @@ class University:
             else:
                 return 0
 
-    # def generate_university_str_default(self) -> str:
-    #     """
-    #     generate_university_str_default calls generate_university_str with an empty list
-    #     to return the default (least detailed) string to describe the university
-    #     """
-    #     return display_university([])
 
 
 
