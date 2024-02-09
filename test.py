@@ -87,6 +87,23 @@ def test_query_engine():
         return False
 
 
+def test_sort():
+    """
+    This is sorting function for testing the sorting. This will create a bunch of university objects, sort them,
+    and then test that they're sorted
+    :return: Boolean, true if no test cases failed, false otherwise
+    """
+
+
+def test_print():
+    """
+    This is the printing function for the query output. This will print the queried, sorted, things and this
+    will be compared to the correct output.
+    :return: Boolean, true if no test cases failed, false otherwise
+    """
+    # Strings are returned using this: university.generate_university_str(display_fields)
+
+
 if __name__ == "__main__":
     # Add testing functions as needed. Each one should test the function in several ways, and
     # return true if all test cases passed. If not, print to console what failed and return false at the end of
