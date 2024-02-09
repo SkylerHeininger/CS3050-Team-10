@@ -165,8 +165,8 @@ class University:
                 university1.sustainability == university2.sustainability and
                 university1.equal_rank == university2.equal_rank and
                 university1.country == university2.country and
-                university1.founding_date == university2.founding_date) #and
-                #university1.student_population == university2.student_population)
+                university1.founding_date == university2.founding_date and
+                university1.student_population == university2.student_population)
 
     @staticmethod
     def compare_universities_field(university1, university2, field):

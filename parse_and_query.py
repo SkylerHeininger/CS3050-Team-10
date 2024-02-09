@@ -277,7 +277,6 @@ def query_engine(conditionals, firestore):
 
     query_result_list = []
     for conditional in conditionals:
-        print(conditional)
         # Create list to store docs queried for nth conditional in conditionals
         query_results = []
 
@@ -293,8 +292,7 @@ def query_engine(conditionals, firestore):
             # query_results.append(university_object)
 
             query_results.append(University.from_dict(doc.to_dict()))
-        print(len(query_results))
-        print(type(query_results[0].to_dict()["founding_date"]))
+
         # Append query_results list to query_result_list, repeat process if there is more than one conditional
         query_result_list.append(query_results)
 
