@@ -19,7 +19,7 @@ from pyparsing import one_of  # documentation: https://pyparsing-docs.readthedoc
 # https://pyparsing-docs.readthedocs.io/en/latest/HowToUsePyparsing.html
 
 
-def parse(input_string):
+def parse(input_string) -> tuple(int,list(tuple(str,str,str)),list(str),str):
     """
 
     :param input_string:
@@ -231,7 +231,7 @@ def parse(input_string):
     print('sort field:', sort_field)
 
     # return final tuple
-    pass
+    return (name_show, conditional_tuple_list, [''], sort_field)
 
 
 def intersect_lists(list1, list2, comparison_func):
