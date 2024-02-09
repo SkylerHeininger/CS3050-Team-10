@@ -33,7 +33,7 @@ def parse(input_string):
                           "international_research_network employment_outcomes sustainability equal_rank country "
                           "founding_date student_population")"""
     valid_conditionals_list = ["==", "!=", ">=", "<=", ">", "<"]
-    valid_fields_dictionary = {"rank": "num", "university": "string", "overal_score": "num", "academic_reputation": "num",
+    valid_fields_dictionary = {"rank": "num", "university": "string", "overall_score": "num", "academic_reputation": "num",
                                "employer_reputation": "num", "faculty_student_ratio": "num",
                                "citations_per_faculty": "num", "international_faculty_ratio": "num", "international_students_ratio": "num",
                                "international_research_network": "num", "employment_outcomes": "num", "sustainability": "num",
@@ -144,13 +144,14 @@ def parse(input_string):
         except:
             raise Exception("Invalid input for show int")
 
-
     # Process and load second part of return tuple (conditionals)
     # start by splitting into different conditional phrases
-    conditional_string_list = query_dict['where_phrase'].split("and")
-    conditional_list_list = []
+    conditional_string_list: list[str] = query_dict['where_phrase'].split("and")
+    conditional_list_list: list[list] = []  # will use this to work with each part of a compound conditional input
+    conditional_tuple_list: list[tuple] = []  # will use a tuple to finalize and return the conditionals
 
     # go through each conditional phrase list and find what kind of conditional it is
+    # if there is not a valid conditional operator, it will ignore the phrase
     for single_conditional_string in conditional_string_list:
         found_valid_conditional = False  # will be set to true when we find a valid conditional for this phrase
         for conditional_operator in valid_conditionals_list:  # loop thru valid conditionals to find a valid comparison operator
@@ -168,14 +169,15 @@ def parse(input_string):
         single_conditional_list[0] = single_conditional_list[0].strip()
         single_conditional_list[2] = single_conditional_list[2].strip()
 
-
     # now we need to check if we can do the actual comparison (this is a little more annoying)
     for single_conditional_list in conditional_list_list:
         found_valid_field = False
         for field in valid_fields_dictionary.keys():
             if field in single_conditional_list[0] and not found_valid_field:
                 single_conditional_list[0] = field
+                found_valid_field = True
 
+        print(single_conditional_list, found_valid_field)
         if found_valid_field:
             # figure out what kind of comparisons we can do with the value we are comparing
             field_type = valid_fields_dictionary[single_conditional_list[0]]
@@ -183,18 +185,27 @@ def parse(input_string):
             if field_type == "string":
                 if single_conditional_list[1] != "==" and single_conditional_list[1] != "!=":
                     # user is trying to use an inequality on a string field. Raise exception
-                    raise Exception("Invalid Comparison. Can't use and inequality to evaluate", single_conditional_list[0], "field")
+                    raise Exception("Invalid Comparison. Can't use and inequality to evaluate",
+                                    single_conditional_list[0], "field")
 
             else:  # field type is a number. Ensure the value they are comparing to can be cast to a float
                 try:
                     # cast to float and put back into list
                     single_conditional_list[2] = float(single_conditional_list[2])
+
+                    # if we are here, the field is valid, and so is the comparison value. Thus
+                    # we must pack it into a tuple and add it to the final list of conditional tuples
+                    single_conditional_tuple = (single_conditional_list[0],
+                                                single_conditional_list[1],
+                                                single_conditional_list[2])
+                    conditional_tuple_list.append(single_conditional_tuple)
                 except ValueError:  # couldn't be cast. Raise Exception
-                    raise Exception("Can't cast", single_conditional_list[2], "to a float when comparing to", single_conditional_list[0], "field")
+                    raise Exception("Can't cast", single_conditional_list[2], "to a float when comparing to",
+                                    single_conditional_list[0], "field")
+        else:
+            print("couldn't find a valid field corresponding to the argument \'", single_conditional_list[0])
 
     print(conditional_list_list)
-
-
 
 
     # Process and load third part of return tuple (display_list)
