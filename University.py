@@ -110,10 +110,13 @@ class University:
         :return: University object
         """
         # Handling for optional field, convert the empty string of no input to False, otherwise True
-        if not source['equal_rank']:
-            source['equal_rank'] = False
-        else:
-            source['equal_rank'] = True
+        equal_rank = False if not source['equal_rank'] else True
+
+        # Handling for student population field if it's a string
+        student_population = source['student_population']
+        if isinstance(student_population, str):
+            student_population = int(student_population.replace(',', ''))  # Removing comma and converting to int
+
         try:
             return University(
                 int(source['rank']),
@@ -128,10 +131,10 @@ class University:
                 float(source['international_research_network']),
                 float(source['employment_outcomes']),
                 float(source['sustainability']),
-                source['equal_rank'],
+                equal_rank,
                 source['country'],
                 int(source['founding_date']),
-                int(source['student_population'])
+                student_population
             )
         except ValueError:
             print("Type conversion failed, try again.")
@@ -162,8 +165,8 @@ class University:
                 university1.sustainability == university2.sustainability and
                 university1.equal_rank == university2.equal_rank and
                 university1.country == university2.country and
-                university1.founding_date == university2.founding_date and
-                university1.student_population == university2.student_population)
+                university1.founding_date == university2.founding_date) #and
+                #university1.student_population == university2.student_population)
 
     @staticmethod
     def compare_universities_field(university1, university2, field):

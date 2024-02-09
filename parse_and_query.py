@@ -19,7 +19,7 @@ from pyparsing import one_of  # documentation: https://pyparsing-docs.readthedoc
 # https://pyparsing-docs.readthedocs.io/en/latest/HowToUsePyparsing.html
 
 
-def parse(input_string) -> tuple(int,list(tuple(str,str,str)),list(str),str):
+def parse(input_string):
     """
 
     :param input_string:
@@ -247,6 +247,8 @@ def intersect_lists(list1, list2, comparison_func):
         for uni2 in list2:
             if comparison_func(uni1, uni2):
                 intersection.append(uni1)
+                # Break out of the inner list since this item has already been intersected -
+                # There is no point to continuing with this inner loop
                 break
     return intersection
 
@@ -257,7 +259,6 @@ def query_firestore(conditional, firestore):
     :param conditional: tuple of size 3, with field, operator, conditional
     :return: The query object for a single conditional
     """
-    print(conditional)
     # Filter for the conditional
     filter_cond = FieldFilter(conditional[0], conditional[1], conditional[2])
     # Create a query against the collection
@@ -276,13 +277,15 @@ def query_engine(conditionals, firestore):
 
     query_result_list = []
     for conditional in conditionals:
-
+        print(conditional)
         # Create list to store docs queried for nth conditional in conditionals
         query_results = []
 
-        # Query using nth conditional
-        for doc in firestore.where(conditional).stream():
+        # Query using query_firestore
+        query_output = query_firestore(conditional, firestore)
 
+        # Query using nth conditional
+        for doc in query_output.get():
             # # Convert document into Uni object (???)
             # university_object = doc.from_dict(doc.to_dict())
             #
@@ -290,7 +293,8 @@ def query_engine(conditionals, firestore):
             # query_results.append(university_object)
 
             query_results.append(University.from_dict(doc.to_dict()))
-
+        print(len(query_results))
+        print(type(query_results[0].to_dict()["founding_date"]))
         # Append query_results list to query_result_list, repeat process if there is more than one conditional
         query_result_list.append(query_results)
 
@@ -301,7 +305,6 @@ def query_engine(conditionals, firestore):
         # list to get University objects for everything. I highlighted below how to do this
 
         # Append to query_result_list
-
 
     # At this point, query_result_list is like the following: [[object1, object2, object3,...], [...], ...]
     # Loop through and take the first list, compare with the rest of things in list.
@@ -320,7 +323,7 @@ def query_engine(conditionals, firestore):
         # There were no queries performed
         return False
 
-    ''' Old code '''
+    ''' Old code,, will be deleted '''
     # Need to query the firestore multiple times using the .where
     # Query the first thing in conditionals
     query_compound = query_firestore(conditionals.pop(0), firestore)
@@ -378,7 +381,7 @@ def merge_sort_universities(universities_list, field):
                 j += 1
             k += 1
 
-        # Checking if any element was left
+        # Checking if any element was left after this sorting step
         while i < len(left):
             universities_list[k] = left[i]
             i += 1
