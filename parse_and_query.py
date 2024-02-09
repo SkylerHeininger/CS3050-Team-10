@@ -314,37 +314,10 @@ def query_engine(conditionals, firestore):
             query_intersect = intersect_lists(query_intersect, query_result_list.pop(0),
                                               University.compare_universities_equivalence)
 
-
-
         return query_intersect
     else:
         # There were no queries performed
         return False
-
-    ''' Old code,, will be deleted '''
-    # Need to query the firestore multiple times using the .where
-    # Query the first thing in conditionals
-    query_compound = query_firestore(conditionals.pop(0), firestore)
-    while len(conditionals) > 0:
-        # Based on the structure, we can update query_result using query_firestore.
-        # Each time we call this, it will append another .where() onto the pre-existing query
-        query_compound = query_firestore(conditionals.pop(0), query_compound)
-
-    # Now, we use .stream to perform the query and store the results to a tuple
-    query_documents = (query_compound.get())
-    print(query_documents)
-    print(len(query_documents))
-
-    # Create university objects from the documents
-    universities = []
-    for doc in query_documents:
-        print(doc)
-        # TODO: Mason, this is what I meant by above comment, you have to loop through the query documents
-        # and create objects for each thing
-        universities.append(University.from_dict(doc.to_dict()))
-        print(University.from_dict(doc.to_dict()).generate_university_str([]))
-
-    return universities
 
 
 def merge_sort_universities(universities_list, field):
