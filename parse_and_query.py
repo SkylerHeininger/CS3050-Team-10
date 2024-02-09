@@ -32,6 +32,12 @@ def parse(input_string):
                           "citations_per_faculty international_faculty_ratio international_students_ratio "
                           "international_research_network employment_outcomes sustainability equal_rank country "
                           "founding_date student_population")"""
+    valid_conditionals_list = ["==", "!=", ">=", "<=", ">", "<"]
+    valid_fields_dictionary = {"rank": "num", "university": "string", "overal_score": "num", "academic_reputation": "num",
+                               "employer_reputation": "num", "faculty_student_ratio": "num",
+                               "citations_per_faculty": "num", "international_faculty_ratio": "num", "international_students_ratio": "num",
+                               "international_research_network": "num", "employment_outcomes": "num", "sustainability": "num",
+                               "equal_rank": "num", "country": "string" ,"founding_date": "num"}
 
     where_index = 10000
     display_index = 100000
@@ -136,10 +142,60 @@ def parse(input_string):
         try:
             name_show = int(name_show)
         except:
-            raise Exception("Invalid input")
-    print
+            raise Exception("Invalid input for show int")
+
 
     # Process and load second part of return tuple (conditionals)
+    # start by splitting into different conditional phrases
+    conditional_string_list = query_dict['where_phrase'].split("and")
+    conditional_list_list = []
+
+    # go through each conditional phrase list and find what kind of conditional it is
+    for single_conditional_string in conditional_string_list:
+        found_valid_conditional = False  # will be set to true when we find a valid conditional for this phrase
+        for conditional_operator in valid_conditionals_list:  # loop thru valid conditionals to find a valid comparison operator
+            if not found_valid_conditional and not single_conditional_string.find(conditional_operator) == -1:
+                # the conditional operator is in the conditional phrase string. Split and assign homes to each part
+                single_conditional_list = single_conditional_string.split(conditional_operator)
+                # create a new tuple entry
+                conditional_list_list.append([single_conditional_list[0], conditional_operator, single_conditional_list[1]])
+                found_valid_conditional = True
+
+    print(conditional_list_list)
+
+    # now we should go through the tuple list to clean things up (remove whitespace)
+    for single_conditional_list in conditional_list_list:
+        single_conditional_list[0] = single_conditional_list[0].strip()
+        single_conditional_list[2] = single_conditional_list[2].strip()
+
+
+    # now we need to check if we can do the actual comparison (this is a little more annoying)
+    for single_conditional_list in conditional_list_list:
+        found_valid_field = False
+        for field in valid_fields_dictionary.keys():
+            if field in single_conditional_list[0] and not found_valid_field:
+                single_conditional_list[0] = field
+
+        if found_valid_field:
+            # figure out what kind of comparisons we can do with the value we are comparing
+            field_type = valid_fields_dictionary[single_conditional_list[0]]
+            # if we are comparing a string, make sure we are just using == or !=
+            if field_type == "string":
+                if single_conditional_list[1] != "==" and single_conditional_list[1] != "!=":
+                    # user is trying to use an inequality on a string field. Raise exception
+                    raise Exception("Invalid Comparison. Can't use and inequality to evaluate", single_conditional_list[0], "field")
+
+            else:  # field type is a number. Ensure the value they are comparing to can be cast to a float
+                try:
+                    # cast to float and put back into list
+                    single_conditional_list[2] = float(single_conditional_list[2])
+                except ValueError:  # couldn't be cast. Raise Exception
+                    raise Exception("Can't cast", single_conditional_list[2], "to a float when comparing to", single_conditional_list[0], "field")
+
+    print(conditional_list_list)
+
+
+
 
     # Process and load third part of return tuple (display_list)
 
@@ -172,6 +228,7 @@ def query_firestore(conditional, firestore):
     :param conditional: tuple of size 3, with field, operator, conditional
     :return: The query object for a single conditional
     """
+    print(conditional)
     # Filter for the conditional
     filter_cond = FieldFilter(conditional[0], conditional[1], conditional[2])
     # Create a query against the collection
@@ -196,6 +253,7 @@ def query_engine(conditionals, firestore):
         # list to get University objects for everything. I highlighted below how to do this
 
         # Append to query_result_list
+
 
     # At this point, query_result_list is like the following: [[object1, object2, object3,...], [...], ...]
     # Loop through and take the first list, compare with the rest of things in list.

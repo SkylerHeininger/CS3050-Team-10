@@ -4,7 +4,6 @@ The class mostly just holds points of data but does have a non-trivial to_string
 """
 import sys
 
-
 class University:
     def __init__(self, rank, university, overall_score, academic_reputation, employer_reputation,
                  faculty_student_ratio, citations_per_faculty, international_faculty_ratio,
