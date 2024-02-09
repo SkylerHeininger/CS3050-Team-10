@@ -1,7 +1,9 @@
 from pyparsing import one_of
 
 def test_parse():
-    print(parse('show 10 where rank >= 6 and overall_score <5'))
+    print(parse('show 10 where rank >= 6 and overall_score <5 sort ;lkasdf'))
+    print(parse('show 10 where rank >= 6 and overall_score <5 sort international_faculty_ratio'))
+    print(parse('show 10 where rank >= 6 and overall_score <5 sort university'))
     print(parse('name uvmletsgooo where pee pee poo poo'))
     #print(parse('WH ;KLASDF;KLJ WHERE ;LKASD;LKASD SORT ;ALSKDF'))
 
@@ -194,6 +196,24 @@ def parse(input_string):
 
     print(conditional_list_list)
 
+    # see if there is a valid field in the sort field
+    sort_field = 'rank'  # rank is the default field to sort by
+    found_valid_field = False
+    for field in valid_fields_dictionary.keys():
+        if field in query_dict['sort_phrase'] and not found_valid_field:
+            sort_field = field
+            found_valid_field = True
+
+    # check to make sure we can actually sort by that field
+    if valid_fields_dictionary[sort_field] == "string":
+        print("Can't sort by a string.")
+        found_valid_field = False
+
+    if not found_valid_field:
+        print('Could not find a valid field to sort by. Will sort by default field: rank')
+        sort_field = 'rank'
+
+    print('sort field:', sort_field)
 
 
 def main():

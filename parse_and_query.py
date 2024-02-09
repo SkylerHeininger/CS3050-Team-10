@@ -211,6 +211,24 @@ def parse(input_string):
     # Process and load third part of return tuple (display_list)
 
     # Process and load last part of return tuple (sort_field)
+    # see if there is a valid field in the sort field
+    sort_field = 'rank'  # rank is the default field to sort by
+    found_valid_field = False
+    for field in valid_fields_dictionary.keys():
+        if field in query_dict['sort_phrase'] and not found_valid_field:
+            sort_field = field
+            found_valid_field = True
+
+    # check to make sure we can actually sort by that field
+    if valid_fields_dictionary[sort_field] == "string":
+        print("Can't sort by a string.")
+        found_valid_field = False
+
+    if not found_valid_field:
+        print('Could not find a valid field to sort by. Will sort by default field: rank')
+        sort_field = 'rank'
+
+    print('sort field:', sort_field)
 
     # return final tuple
     pass
