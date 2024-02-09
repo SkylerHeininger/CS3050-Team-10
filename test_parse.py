@@ -1,7 +1,10 @@
 from pyparsing import one_of
 
 def test_parse():
-    print(parse('show 10 where rank > 6 and overall_score <5'))
+    print(parse('show 10 where rank >= 6 and overall_score <5 sort ;lkasdf'))
+    print(parse('show 10 where rank >= 6 and overall_score <5 sort international_faculty_ratio'))
+    print(parse('show 10 where rank >= 6 and overall_score <5 sort university'))
+    print(parse('name uvmletsgooo where pee pee poo poo'))
     #print(parse('WH ;KLASDF;KLJ WHERE ;LKASD;LKASD SORT ;ALSKDF'))
 
 
@@ -19,7 +22,7 @@ def parse(input_string):
                           "international_research_network employment_outcomes sustainability equal_rank country "
                           "founding_date student_population")"""
     valid_conditionals_list = ["==", "!=", ">=", "<=", ">", "<"]
-    valid_fields_dictionary = {"rank": "num", "university": "string", "overal_score": "num",
+    valid_fields_dictionary = {"rank": "num", "university": "string", "overall_score": "num",
                                "academic_reputation": "num",
                                "employer_reputation": "num", "faculty_student_ratio": "num",
                                "citations_per_faculty": "num", "international_faculty_ratio": "num",
@@ -47,7 +50,6 @@ def parse(input_string):
     if 'WHERE' in input_string.upper():
         contains_where = True
         where_index = input_string.upper().find('WHERE')
-        print('where index: ', where_index)
     else:
         contains_where = False
 
@@ -135,8 +137,9 @@ def parse(input_string):
 
     # Process and load second part of return tuple (conditionals)
     # start by splitting into different conditional phrases
-    conditional_string_list = query_dict['where_phrase'].split("and")
-    conditional_list_list = []
+    conditional_string_list: list[str] = query_dict['where_phrase'].split("and")
+    conditional_list_list: list[list] = []  # will use this to work with each part of a compound conditional input
+    conditional_tuple_list: list[tuple] = []  # will use a tuple to finalize and return the conditionals
 
     # go through each conditional phrase list and find what kind of conditional it is
     for single_conditional_string in conditional_string_list:
@@ -165,8 +168,8 @@ def parse(input_string):
                 single_conditional_list[0] = field
                 found_valid_field = True
 
+        print(single_conditional_list, found_valid_field)
         if found_valid_field:
-            print('here')
             # figure out what kind of comparisons we can do with the value we are comparing
             field_type = valid_fields_dictionary[single_conditional_list[0]]
             # if we are comparing a string, make sure we are just using == or !=
@@ -180,11 +183,37 @@ def parse(input_string):
                 try:
                     # cast to float and put back into list
                     single_conditional_list[2] = float(single_conditional_list[2])
+
+                    # if we are here, the field is valid, and so is the comparison value. Thus
+                    # we must pack it into a tuple and add it to the final list of conditional tuples
+                    single_conditional_tuple = (single_conditional_list[0], single_conditional_list[1], single_conditional_list[2])
+                    conditional_tuple_list.append(single_conditional_tuple)
                 except ValueError:  # couldn't be cast. Raise Exception
                     raise Exception("Can't cast", single_conditional_list[2], "to a float when comparing to",
                                     single_conditional_list[0], "field")
+        else:
+            print("couldn't find a valid field corresponding to the argument \'", single_conditional_list[0])
 
     print(conditional_list_list)
+
+    # see if there is a valid field in the sort field
+    sort_field = 'rank'  # rank is the default field to sort by
+    found_valid_field = False
+    for field in valid_fields_dictionary.keys():
+        if field in query_dict['sort_phrase'] and not found_valid_field:
+            sort_field = field
+            found_valid_field = True
+
+    # check to make sure we can actually sort by that field
+    if valid_fields_dictionary[sort_field] == "string":
+        print("Can't sort by a string.")
+        found_valid_field = False
+
+    if not found_valid_field:
+        print('Could not find a valid field to sort by. Will sort by default field: rank')
+        sort_field = 'rank'
+
+    print('sort field:', sort_field)
 
 
 def main():
