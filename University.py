@@ -56,7 +56,7 @@ class University:
             to_return += 'Sustainability: ' + self.sustainability + ', '
         if 'equal_rank' in field_list:
             if self.equal_rank:
-                to_return += f'Tied in rank at position {self.rank}, '
+                to_return += f'Tied in rank at position: {self.rank}, '
             else:
                 to_return += f'Not tied in ranking, '
         if 'country' in field_list:

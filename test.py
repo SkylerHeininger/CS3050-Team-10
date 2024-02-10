@@ -95,7 +95,7 @@ def test_sort():
 
     amount_failed = 0
     amount_passed = 0
-    number_of_cases = 10
+    number_of_cases = 11
 
     # Get reference to firebase Universities
     firestore_collection = firestore.client().collection("universities")
@@ -117,7 +117,8 @@ def test_sort():
     sorting_fields = ["rank", "sustainability", "founding_date", "international_faculty_ratio", "academic_reputation"]
     # It is important to note that the parser will automatically limit fields to sort by to only being numerical
 
-    # Set a show_int of 10, decrement and check the length each time
+    # Set a show_int of 12, decrement and check the length each time
+    # This checks that show_int with more items in query in positive direction does not break
     show_int = 12
 
     # sort each using sorting engine, then loop through to ensure that they are sorted in order
@@ -136,9 +137,9 @@ def test_sort():
         show_int -= 1
 
     # Now do the same but sort negatively
-    # Set a show_int of 10, decrement and check the length each time
-    # This will additionally test what happens when show_int is set past the max length
-    show_int = -10
+    # Set a show_int of -8, decrement and check the length each time
+    # This will additionally test what happens when show_int is set past the max length in negative direction
+    show_int = -8
 
     # sort each using sorting engine, then loop through to ensure that they are sorted in order
     for field in sorting_fields:
@@ -156,12 +157,27 @@ def test_sort():
                 break
         show_int -= 1
 
+    # Now do more edge cases of query has nothing in it
+    # Testing conditional values
+    conditionals = [("rank", "<", 1)]  # query rank, basic query
+    # Different queries will simply give different objects with different values, since we will sort using different
+    # fields, then this does not matter
+
+    # Perform query
+    output = query_engine(conditionals, firestore_collection)
+
+    # Sort query - random inputs of 100 and rank for the other parameters
+    sorted_universities = sorting_engine(output, "rank", 100)
+    if sorted_universities != []:
+        print("[FAILED] Empty sorted query test case")
+        amount_failed += 1
+
     amount_passed = number_of_cases - amount_failed
     if amount_passed == number_of_cases:
-        print(f"[PASSED] All {number_of_cases} test cases passed for query engine")
+        print(f"[PASSED] All {number_of_cases} test cases passed for sorting engine")
         return True
     else:
-        print(f"[FAILED] {amount_failed} test cases failed for query engine")
+        print(f"[FAILED] {amount_failed} test cases failed for sorting engine")
         return False
 
 
@@ -172,6 +188,7 @@ def test_print():
     :return: Boolean, true if no test cases failed, false otherwise
     """
     # Strings are returned using this: university.generate_university_str(display_fields)
+    # Must check that these are all correct
 
 
 if __name__ == "__main__":
