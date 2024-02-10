@@ -2,7 +2,7 @@
 CS 3050 Team 10
 This file is for testing the functionality of all the functions of this project
 """
-from parse_and_query import query_engine, query_firestore, intersect_lists
+from parse_and_query import query_engine, query_firestore, intersect_lists, sorting_engine, merge_sort_universities
 from firebase_admin import credentials, db, firestore
 import firebase_admin
 from firebase_admin import credentials, db
@@ -25,9 +25,6 @@ def test_query_engine():
     amount_failed = 0
     amount_passed = 0
     number_of_cases = 5
-
-    # Establish connection with firebase
-    connect_firebase("firebase_cert.json", "https://cs3050-10-default-rtdb.firebaseio.com/")
 
     # Get reference to firebase Universities
     firestore_collection = firestore.client().collection("universities")
@@ -80,10 +77,10 @@ def test_query_engine():
         amount_failed += 1
 
     if amount_passed == number_of_cases:
-        print(f"[PASSED] All {number_of_cases} test cases passed")
+        print(f"[PASSED] All {number_of_cases} test cases passed for query engine")
         return True
     else:
-        print(f"[FAILED] {amount_failed} test cases failed")
+        print(f"[FAILED] {amount_failed} test cases failed for query engine")
         return False
 
 
@@ -93,6 +90,79 @@ def test_sort():
     and then test that they're sorted
     :return: Boolean, true if no test cases failed, false otherwise
     """
+    # Get a list of university objects, easiest way to do this is to query using query engine
+    print("Testing sorting engine")
+
+    amount_failed = 0
+    amount_passed = 0
+    number_of_cases = 10
+
+    # Get reference to firebase Universities
+    firestore_collection = firestore.client().collection("universities")
+
+    # Testing conditional values
+    conditionals = [("rank", "<=", 10), ("rank", ">=", 1)]  # query rank, basic query
+    # Different queries will simply give different objects with different values, since we will sort using different
+    # fields, then this does not matter
+
+    # Perform query
+    output = query_engine(conditionals, firestore_collection)
+
+    # Make sure 10 things are returned - if this is incorrect this is unfixable, there is some other error present
+    if len(output) != 10:
+        print("[FAILED] Query engine failed for sorting test")
+        return False
+
+    # Sort by the following fields
+    sorting_fields = ["rank", "sustainability", "founding_date", "international_faculty_ratio", "academic_reputation"]
+    # It is important to note that the parser will automatically limit fields to sort by to only being numerical
+
+    # Set a show_int of 10, decrement and check the length each time
+    show_int = 12
+
+    # sort each using sorting engine, then loop through to ensure that they are sorted in order
+    for field in sorting_fields:
+        # sort
+        sorted_universities = sorting_engine(output, field, show_int)
+        if len(sorted_universities) != show_int and len(sorted_universities) != len(output):
+            print("[FAILED] Correct length of university objects")
+            amount_failed += 1
+        # Loop through the universities and compare each (should be descending order)
+        for i in range(len(sorted_universities) - 1):
+            if sorted_universities[i].to_dict()[field] < sorted_universities[i + 1].to_dict()[field]:
+                print(f"[FAILED] Correctly sorting universities by {field}")
+                amount_failed += 1
+                break
+        show_int -= 1
+
+    # Now do the same but sort negatively
+    # Set a show_int of 10, decrement and check the length each time
+    # This will additionally test what happens when show_int is set past the max length
+    show_int = -10
+
+    # sort each using sorting engine, then loop through to ensure that they are sorted in order
+    for field in sorting_fields:
+        # sort
+        sorted_universities = sorting_engine(output, field, show_int)
+        # This tests if more things are asked than are in the list
+        if len(sorted_universities) != abs(show_int) and len(sorted_universities) != len(output): # abs needed since show_int negative
+            print("[FAILED] Correct length of university objects")
+            amount_failed += 1
+        # Loop through the universities and compare each (should be ascending order)
+        for i in range(len(sorted_universities) - 1):
+            if sorted_universities[i].to_dict()[field] > sorted_universities[i + 1].to_dict()[field]:
+                print(f"[FAILED] Correctly sorting universities by {field}")
+                amount_failed += 1
+                break
+        show_int -= 1
+
+    amount_passed = number_of_cases - amount_failed
+    if amount_passed == number_of_cases:
+        print(f"[PASSED] All {number_of_cases} test cases passed for query engine")
+        return True
+    else:
+        print(f"[FAILED] {amount_failed} test cases failed for query engine")
+        return False
 
 
 def test_print():
@@ -105,8 +175,11 @@ def test_print():
 
 
 if __name__ == "__main__":
+    # Establish connection with firebase
+    connect_firebase("firebase_cert.json", "https://cs3050-10-default-rtdb.firebaseio.com/")
+
     # Add testing functions as needed. Each one should test the function in several ways, and
     # return true if all test cases passed. If not, print to console what failed and return false at the end of
     # that test suite.
-    if test_query_engine():
+    if test_query_engine() and test_sort():
         print("All test cases passed")

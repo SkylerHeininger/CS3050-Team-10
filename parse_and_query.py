@@ -285,24 +285,11 @@ def query_engine(conditionals, firestore):
 
         # Query using nth conditional
         for doc in query_output.get():
-            # # Convert document into Uni object (???)
-            # university_object = doc.from_dict(doc.to_dict())
-            #
-            # # Append university_object to query_results
-            # query_results.append(university_object)
-
+            # Convert document into Uni object and append university_object to query_results
             query_results.append(University.from_dict(doc.to_dict()))
 
         # Append query_results list to query_result_list, repeat process if there is more than one conditional
         query_result_list.append(query_results)
-
-
-        # Query using conditional
-        pass
-        # Run .get (also need to run .to_dict on this and then pass that to University.from_dict on each item in the
-        # list to get University objects for everything. I highlighted below how to do this
-
-        # Append to query_result_list
 
     # At this point, query_result_list is like the following: [[object1, object2, object3,...], [...], ...]
     # Loop through and take the first list, compare with the rest of things in list.
@@ -381,9 +368,16 @@ def sorting_engine(universities_list, ranking_field, show_int):
     # Select the show_int amount of things, in descending order if show_int is positive
     # and ascending order if n is negative
     if show_int > 0:
-        return universities_sorted[-show_int:]
+        # reverse the list to descending order
+        universities_sorted = universities_sorted[::-1]
+        # check for maximum length
+        if show_int > len(universities_sorted):
+            show_int = len(universities_sorted)
+        return universities_sorted[:abs(show_int)]
     elif show_int < 0:
-        return universities_sorted[:show_int]
+        if abs(show_int) > len(universities_sorted):
+            show_int = -len(universities_sorted)
+        return universities_sorted[:abs(show_int)]
     else:
         # return an empty list if a show_int of 0 is provided
         return []

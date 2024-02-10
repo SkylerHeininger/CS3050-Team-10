@@ -193,8 +193,9 @@ class University:
         except KeyError:
             print("Invalid key entered, try again.")
             sys.exit()
-        name_1 = dict_repr_1["name"]
-        name_2 = dict_repr_2["name"]
+
+        name_1 = dict_repr_1["university"]
+        name_2 = dict_repr_2["university"]
 
         # Compare (in python <, > compare lexicographically)
         if val_1 < val_2:
