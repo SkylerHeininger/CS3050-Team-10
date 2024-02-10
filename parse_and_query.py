@@ -367,16 +367,32 @@ def sorting_engine(universities_list, ranking_field, show_int):
     # Select the show_int amount of things, in descending order if show_int is positive
     # and ascending order if n is negative
     if show_int > 0:
-        # reverse the list to descending order
-        universities_sorted = universities_sorted[::-1]
-        # check for maximum length
-        if show_int > len(universities_sorted):
-            show_int = len(universities_sorted)
-        return universities_sorted[:abs(show_int)]
+        # Account for rank sorting opposite direction than normal
+        # This is ascending order when show_int is positive
+        if ranking_field == "rank":
+            if abs(show_int) > len(universities_sorted):
+                show_int = -len(universities_sorted)
+            return universities_sorted[:abs(show_int)]
+        else:
+            # reverse the list to descending order
+            universities_sorted = universities_sorted[::-1]
+            # check for maximum length
+            if show_int > len(universities_sorted):
+                show_int = len(universities_sorted)
+            return universities_sorted[:abs(show_int)]
     elif show_int < 0:
-        if abs(show_int) > len(universities_sorted):
-            show_int = -len(universities_sorted)
-        return universities_sorted[:abs(show_int)]
+        # Again, account for rank being opposite
+        if ranking_field == "rank":
+            # reverse the list to descending order
+            universities_sorted = universities_sorted[::-1]
+            # check for maximum length
+            if show_int > len(universities_sorted):
+                show_int = len(universities_sorted)
+            return universities_sorted[:abs(show_int)]
+        else:
+            if abs(show_int) > len(universities_sorted):
+                show_int = -len(universities_sorted)
+            return universities_sorted[:abs(show_int)]
     else:
         # return an empty list if a show_int of 0 is provided
         return []

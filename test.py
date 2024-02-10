@@ -87,7 +87,8 @@ def test_query_engine():
 def test_sort():
     """
     This is sorting function for testing the sorting. This will create a bunch of university objects, sort them,
-    and then test that they're sorted
+    and then test that they're sorted. It is important to note that rank is sorted differently from other numeric fields.
+    Rather than a higher number being a better number, a lower number is a better one.
     :return: Boolean, true if no test cases failed, false otherwise
     """
     # Get a list of university objects, easiest way to do this is to query using query engine
@@ -113,8 +114,8 @@ def test_sort():
         print("[FAILED] Query engine failed for sorting test")
         return False
 
-    # Sort by the following fields
-    sorting_fields = ["rank", "sustainability", "founding_date", "international_faculty_ratio", "academic_reputation"]
+    # Sort by the following fields - rank is not included in this
+    sorting_fields = ["sustainability", "founding_date", "international_faculty_ratio", "academic_reputation"]
     # It is important to note that the parser will automatically limit fields to sort by to only being numerical
 
     # Set a show_int of 12, decrement and check the length each time
@@ -157,6 +158,33 @@ def test_sort():
                 break
         show_int -= 1
 
+    # test sorting by ranking, with positive show_int
+    show_int = 10
+    sorted_universities = sorting_engine(output, "rank", show_int)
+    if len(sorted_universities) != show_int and len(sorted_universities) != len(output):
+        print("[FAILED] Correct length of university objects")
+        amount_failed += 1
+    # Loop through the universities and compare each (should be ascending order)
+    for i in range(len(sorted_universities) - 1):
+        if sorted_universities[i].to_dict()["rank"] > sorted_universities[i + 1].to_dict()["rank"]:
+            print(f"[FAILED] Correctly sorting universities by rank")
+            amount_failed += 1
+            break
+
+    # test sorting by ranking, with positive show_int
+    show_int = -10
+    sorted_universities = sorting_engine(output, "rank", show_int)
+    if len(sorted_universities) != show_int and len(sorted_universities) != len(output):
+        print("[FAILED] Correct length of university objects")
+        amount_failed += 1
+    # Loop through the universities and compare each (should be ascending order)
+    for i in range(len(sorted_universities) - 1):
+        if sorted_universities[i].to_dict()["rank"] < sorted_universities[i + 1].to_dict()["rank"]:
+            print(f"[FAILED] Correctly sorting universities by rank")
+            amount_failed += 1
+            break
+
+
     # Now do more edge cases of query has nothing in it
     # Testing conditional values
     conditionals = [("rank", "<", 1)]  # query rank, basic query
@@ -187,8 +215,61 @@ def test_print():
     will be compared to the correct output.
     :return: Boolean, true if no test cases failed, false otherwise
     """
+    # Test case variables
+    amount_failed = 0
+    number_cases = 5
+
     # Strings are returned using this: university.generate_university_str(display_fields)
     # Must check that these are all correct
+
+    # Query to get a single thing
+    # Get reference to firebase Universities
+    firestore_collection = firestore.client().collection("universities")
+
+    # Testing conditional values
+    conditionals = [("rank", "<=", 3), ("rank", ">=", 1)]  # query rank, basic query
+    # Different queries will simply give different objects with different values, since we will sort using different
+    # fields, then this does not matter
+
+    # Perform query
+    output = query_engine(conditionals, firestore_collection)
+    # Sort universities, to ensure same workflow as in practice
+    sorted_unis = sorting_engine(output, "rank", 100)
+    for university in sorted_unis:
+        print(university.generate_university_str(["employer_reputation"]))
+
+    # Test with basic fields
+    expected_output_1 = ["Rank: 1, Name: Massachusetts Institute of Technology (MIT), Employer Reputation: 100.0",
+                         "Rank: 2, Name: University of Cambridge, Employer Reputation: 100.0",
+                         "Rank: 3, Name: University of Oxford, Employer Reputation: 100.0"]
+    for i in range(len(sorted_unis)):
+        print(sorted_unis[i].generate_university_str(["employer_reputation"]))
+        if expected_output_1[i] != sorted_unis[i].generate_university_str(["employer_reputation"]):
+            amount_failed += 1
+            print("[FAILED] Single display output")
+            break
+
+    return
+    # Test with optional fields
+    uni2 = University(rank=1, university="Test University", overall_score="100", academic_reputation="High",
+                      faculty_student_ratio="10:1", sustainability="High")
+    expected_output2 = "Rank: 1, Name: Test University, Overall Score: 100, Academic Reputation: High, Faculty to Student Ratio: 10:1, Sustainability: High"
+    assert uni2.generate_university_str(
+        ['overall_score', 'academic_reputation', 'faculty_student_ratio', 'sustainability']) == expected_output2
+
+    # Test tied rank
+    uni3 = University(rank=1, university="Test University", equal_rank=True)
+    expected_output3 = "Rank: 1, Name: Test University, Tied in rank at position: 1"
+    assert uni3.generate_university_str(['equal_rank']) == expected_output3
+
+    # Test with no fields provided
+    uni4 = University(rank=1, university="Test University")
+    expected_output4 = "Rank: 1, Name: Test University"
+    assert uni4.generate_university_str([]) == expected_output4
+
+    # Add more test cases as needed
+
+    print("All test cases passed.")
 
 
 if __name__ == "__main__":
@@ -198,5 +279,5 @@ if __name__ == "__main__":
     # Add testing functions as needed. Each one should test the function in several ways, and
     # return true if all test cases passed. If not, print to console what failed and return false at the end of
     # that test suite.
-    if test_query_engine() and test_sort():
+    if test_query_engine() and test_sort() and test_print():
         print("All test cases passed")

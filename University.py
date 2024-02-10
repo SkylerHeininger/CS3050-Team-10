@@ -32,43 +32,43 @@ class University:
         a string that can be used to display specific details about the university.
         """
         to_return = 'Rank: ' + str(self.rank) + ', '
-        to_return += 'Name: ' + self.university + ', '
+        to_return += 'Name: ' + str(self.university) + ', '
 
         if 'overall_score' in field_list:
-            to_return += 'Overall Score: ' + self.overall_score + ', '
+            to_return += 'Overall Score: ' + str(self.overall_score) + ', '
         if 'academic_reputation' in field_list:
-            to_return += 'Academic Reputation: ' + self.academic_reputation + ', '
+            to_return += 'Academic Reputation: ' + str(self.academic_reputation) + ', '
         if 'employer_reputation' in field_list:
-            to_return += 'Employer Reputation: ' + self.employer_reputation + ', '
+            to_return += 'Employer Reputation: ' + str(self.employer_reputation) + ', '
         if 'faculty_student_ratio' in field_list:
-            to_return += 'Faculty to Student Ratio: ' + self.faculty_student_ratio + ', '
+            to_return += 'Faculty to Student Ratio: ' + str(self.faculty_student_ratio) + ', '
         if 'citations_per_faculty' in field_list:
-            to_return += 'Citations per faculty: ' + self.citations_per_faculty + ', '
+            to_return += 'Citations per faculty: ' + str(self.citations_per_faculty) + ', '
         if 'international_faculty_ratio' in field_list:
-            to_return += 'International Faculty Ratio: ' + self.international_faculty_ratio + ', '
+            to_return += 'International Faculty Ratio: ' + str(self.international_faculty_ratio) + ', '
         if 'international_students_ratio' in field_list:
-            to_return += 'International Students Ratio: ' + self.international_students_ratio + ', '
+            to_return += 'International Students Ratio: ' + str(self.international_students_ratio) + ', '
         if 'international_research_network' in field_list:
-            to_return += 'International Research Network: ' + self.international_research_network + ', '
+            to_return += 'International Research Network: ' + str(self.international_research_network) + ', '
         if 'employment_outcomes' in field_list:
-            to_return += 'Employment Outcomes: ' + self.employment_outcomes + ', '
+            to_return += 'Employment Outcomes: ' + str(self.employment_outcomes) + ', '
         if 'sustainability' in field_list:
-            to_return += 'Sustainability: ' + self.sustainability + ', '
+            to_return += 'Sustainability: ' + str(self.sustainability) + ', '
         if 'equal_rank' in field_list:
             if self.equal_rank:
                 to_return += f'Tied in rank at position: {self.rank}, '
             else:
                 to_return += f'Not tied in ranking, '
         if 'country' in field_list:
-            to_return += 'Country: ' + self.country + ', '
+            to_return += 'Country: ' + str(self.country) + ', '
         if 'founding_date' in field_list:
-            to_return += 'Founding Year: ' + self.founding_date + ', '
+            to_return += 'Founding Year: ' + str(self.founding_date) + ', '
         if 'student_population' in field_list:
-            to_return += 'Student Population: ' + self.student_population + ', '
+            to_return += 'Student Population: ' + str(self.student_population) + ', '
 
         # strip unnecessary commas and spaces
-        to_return.rstrip()
-        to_return.rstrip(',')
+        to_return = to_return.rstrip()
+        to_return = to_return.rstrip(',')
 
         return to_return
 
