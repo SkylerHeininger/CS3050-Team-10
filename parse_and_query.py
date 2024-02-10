@@ -315,7 +315,6 @@ def merge_sort_universities(universities_list, field):
     :param field: Field over which to sort
     :return: Sorted list of university objects
     """
-    # TODO: test this function to ensure functionality
     if len(universities_list) > 1:
         # Find middle of array
         middle = len(universities_list) // 2
