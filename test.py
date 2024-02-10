@@ -215,9 +215,10 @@ def test_print():
     will be compared to the correct output.
     :return: Boolean, true if no test cases failed, false otherwise
     """
+    print("Testing printing function")
     # Test case variables
     amount_failed = 0
-    number_cases = 5
+    number_of_cases = 3
 
     # Strings are returned using this: university.generate_university_str(display_fields)
     # Must check that these are all correct
@@ -247,41 +248,50 @@ def test_print():
             break
 
     # Testing conditional values
-    conditionals = [("rank", "<=", 38), ("rank", ">=", 29)]  # query rank, basic query
-    # Different queries will simply give different objects with different values, since we will sort using different
-    # fields, then this does not matter
-
+    conditionals = [("rank", "<=", 38), ("rank", ">=", 33)]  # query rank, basic query
     # Perform query
     output = query_engine(conditionals, firestore_collection)
     # Sort universities, to ensure same workflow as in practice
     sorted_unis = sorting_engine(output, "rank", 100)
-    for university in sorted_unis:
-        print(university.generate_university_str(["employer_reputation", "equal_rank"]))
-    # Test with optional fields
-    expected_output_1 = ["Rank: 1, Name: Massachusetts Institute of Technology (MIT), Employer Reputation: 100.0",
-                         "Rank: 2, Name: University of Cambridge, Employer Reputation: 100.0",
-                         "Rank: 3, Name: University of Oxford, Employer Reputation: 100.0"]
-    return
+
+    # Test with optional fields and tied in rank
+    expected_output_2 = ["Rank: 33, Name: University of Michigan-Ann Arbor, Employer Reputation: 89.9, Not tied in ranking",
+                         "Rank: 34, Name: Australian National University (ANU), Employer Reputation: 70.2, Tied in rank at position: 34",
+                         "Rank: 34, Name: University of British Columbia, Employer Reputation: 93.5, Tied in rank at position: 34",
+                         "Rank: 36, Name: EPFL Ã¢â‚¬â€œ Ãƒâ€°cole polytechnique fÃƒÂ©dÃƒÂ©rale de Lausanne, Employer Reputation: 59.9, Not tied in ranking",
+                         "Rank: 37, Name: Technical University of Munich, Employer Reputation: 98.2, Not tied in ranking",
+                         "Rank: 38, Name: Institut Polytechnique de Paris, Employer Reputation: 99.6, Tied in rank at position: 38",
+                         "Rank: 38, Name: New York University (NYU), Employer Reputation: 98.5, Tied in rank at position: 38"]
     for i in range(len(sorted_unis)):
-        print(sorted_unis[i].generate_university_str(["employer_reputation"]))
-        if expected_output_1[i] != sorted_unis[i].generate_university_str(["employer_reputation"]):
+        if expected_output_2[i] != sorted_unis[i].generate_university_str(["employer_reputation", "equal_rank"]):
             amount_failed += 1
             print("[FAILED] Single display output")
             break
-    return
-    # Test tied rank
-    uni3 = University(rank=1, university="Test University", equal_rank=True)
-    expected_output3 = "Rank: 1, Name: Test University, Tied in rank at position: 1"
-    assert uni3.generate_university_str(['equal_rank']) == expected_output3
 
     # Test with no fields provided
-    uni4 = University(rank=1, university="Test University")
-    expected_output4 = "Rank: 1, Name: Test University"
-    assert uni4.generate_university_str([]) == expected_output4
+    conditionals = [("rank", "<=", 3), ("rank", ">=", 1)]  # query rank, basic query
+    # Perform query
+    output = query_engine(conditionals, firestore_collection)
+    # Sort universities, to ensure same workflow as in practice
+    sorted_unis = sorting_engine(output, "rank", 100)
 
-    # Add more test cases as needed
+    expected_output_3 = ["Rank: 1, Name: Massachusetts Institute of Technology (MIT)",
+                         "Rank: 2, Name: University of Cambridge",
+                         "Rank: 3, Name: University of Oxford"]
+    for i in range(len(sorted_unis)):
+        if expected_output_3[i] != sorted_unis[i].generate_university_str([]):
+            amount_failed += 1
+            print("[FAILED] Single display output")
+            break
 
-    print("All test cases passed.")
+    # Print test case results
+    amount_passed = number_of_cases - amount_failed
+    if amount_passed == number_of_cases:
+        print(f"[PASSED] All {number_of_cases} test cases passed for printing function")
+        return True
+    else:
+        print(f"[FAILED] {amount_failed} test cases failed for printing function")
+        return False
 
 
 if __name__ == "__main__":
