@@ -388,10 +388,24 @@ def print_results(universities_list, display_fields):
     This function prints the the results of the query.
     :param universities_list: The queried and sorted list of University objects
     :param display_fields: The fields to display
-    :return: True if all printing occurred successfully, false otherwise
+    :return: Null
     """
     for university in universities_list:
         print(university.generate_university_str(display_fields))
+
+
+def print_help():
+    """
+    This function will print the help output to the console
+    :return: Null
+    """
+    output_string = f"Here are some commands with their uses:\n" \
+                    f"show - how many items to return, make this negative for descending order\n" \
+                    f"name - the name of the university to return information on\n" \
+                    f"where - the conditionals over which you want to compare universities\n" \
+                    f"display - the fields you wish to have displayed to console" \
+                    f"sort - the field over which you want the output to be sorted, defaults to ranking\n"
+    print(output_string)
 
 
 if __name__ == "__main__":
@@ -413,11 +427,20 @@ if __name__ == "__main__":
         user_input = input(">> ")  # Format this however we want
 
         # If input is exit or help, handle those and continue to next loop
+        if user_input[:4] == "HELP":
+            print_help()
+        elif user_input[:4] == "EXIT":
+            print("Exiting query program.")
+            sys.exit(0)
 
         # Pass input to parser
+        show_int, conditionals, display_fields, sorting_field = parse(user_input)
 
         # Pass parser conditionals to query
+        query_results = query_engine(conditionals, firestore_collection)
 
         # Pass query objects to sort function
+        sorted_results = sorting_engine(query_results, sorting_field, show_int)
 
         # Pass sorted objects to print function
+        print_results(sorted_results, display_fields)
