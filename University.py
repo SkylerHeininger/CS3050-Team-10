@@ -173,8 +173,7 @@ class University:
         """
         This function will compare two university objects by the specified field. This will return
         -1 if the first is less than the second, 0 if equal, and 1 if the first is greater than the second.
-        This function is for sorting purposes only. If the field is a string, these will be compared lexicographically.
-        Equal objects will also be compared lexicographically by their university name.
+        This function is for sorting purposes only.
         :param university1: University object
         :param university2: University object
         :param field: Field parameter
@@ -203,13 +202,7 @@ class University:
         elif val_1 > val_2:
             return 1
         else:
-            # Values equal, compare names
-            if name_1 < name_2:
-                return -1
-            elif name_1 > name_2:
-                return 1
-            else:
-                return 0
+            return 0
 
 
 

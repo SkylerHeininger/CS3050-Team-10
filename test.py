@@ -235,28 +235,40 @@ def test_print():
     output = query_engine(conditionals, firestore_collection)
     # Sort universities, to ensure same workflow as in practice
     sorted_unis = sorting_engine(output, "rank", 100)
-    for university in sorted_unis:
-        print(university.generate_university_str(["employer_reputation"]))
 
     # Test with basic fields
     expected_output_1 = ["Rank: 1, Name: Massachusetts Institute of Technology (MIT), Employer Reputation: 100.0",
                          "Rank: 2, Name: University of Cambridge, Employer Reputation: 100.0",
                          "Rank: 3, Name: University of Oxford, Employer Reputation: 100.0"]
     for i in range(len(sorted_unis)):
-        print(sorted_unis[i].generate_university_str(["employer_reputation"]))
         if expected_output_1[i] != sorted_unis[i].generate_university_str(["employer_reputation"]):
             amount_failed += 1
             print("[FAILED] Single display output")
             break
 
-    return
-    # Test with optional fields
-    uni2 = University(rank=1, university="Test University", overall_score="100", academic_reputation="High",
-                      faculty_student_ratio="10:1", sustainability="High")
-    expected_output2 = "Rank: 1, Name: Test University, Overall Score: 100, Academic Reputation: High, Faculty to Student Ratio: 10:1, Sustainability: High"
-    assert uni2.generate_university_str(
-        ['overall_score', 'academic_reputation', 'faculty_student_ratio', 'sustainability']) == expected_output2
+    # Testing conditional values
+    conditionals = [("rank", "<=", 38), ("rank", ">=", 29)]  # query rank, basic query
+    # Different queries will simply give different objects with different values, since we will sort using different
+    # fields, then this does not matter
 
+    # Perform query
+    output = query_engine(conditionals, firestore_collection)
+    # Sort universities, to ensure same workflow as in practice
+    sorted_unis = sorting_engine(output, "rank", 100)
+    for university in sorted_unis:
+        print(university.generate_university_str(["employer_reputation", "equal_rank"]))
+    # Test with optional fields
+    expected_output_1 = ["Rank: 1, Name: Massachusetts Institute of Technology (MIT), Employer Reputation: 100.0",
+                         "Rank: 2, Name: University of Cambridge, Employer Reputation: 100.0",
+                         "Rank: 3, Name: University of Oxford, Employer Reputation: 100.0"]
+    return
+    for i in range(len(sorted_unis)):
+        print(sorted_unis[i].generate_university_str(["employer_reputation"]))
+        if expected_output_1[i] != sorted_unis[i].generate_university_str(["employer_reputation"]):
+            amount_failed += 1
+            print("[FAILED] Single display output")
+            break
+    return
     # Test tied rank
     uni3 = University(rank=1, university="Test University", equal_rank=True)
     expected_output3 = "Rank: 1, Name: Test University, Tied in rank at position: 1"

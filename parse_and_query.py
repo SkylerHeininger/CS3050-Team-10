@@ -328,9 +328,10 @@ def merge_sort_universities(universities_list, field):
 
         # Initialize sorting variables
         i = j = k = 0
-        # Copy data to temp arrays L[] and R[]
+        # Copy data to temp arrays left[] and right[]
         while i < len(left) and j < len(right):
-            if University.compare_universities_field(left[i], right[j], field) < 0:
+            comparison = University.compare_universities_field(left[i], right[j], field)
+            if comparison < 0 or comparison == 0:
                 universities_list[k] = left[i]
                 i += 1
             else:
