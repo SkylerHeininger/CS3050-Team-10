@@ -24,7 +24,7 @@ def test_query_engine():
 
     amount_failed = 0
     amount_passed = 0
-    number_of_cases = 5
+    number_of_cases = 7
 
     # Get reference to firebase Universities
     firestore_collection = firestore.client().collection("universities")
@@ -37,6 +37,8 @@ def test_query_engine():
                            ("academic_reputation", "==", 100)]  # query 3 fields
     conditionals_test_5 = [("rank", "<=", 10), ("founding_date", ">=", 1900),
                            ("academic_reputation", "==", 100)]  # query 3 fields, with later date out of scope
+    conditionals_test_6 = [("rank", "<=", 10), ("founding_date", ">=", 2000)]
+    conditionals_test_7 = [("rank", "<=", 10), ("people", '>=', 14000)] # invalid field test
 
     # Perform queries
     output_1 = query_engine(conditionals_test_1, firestore_collection)
@@ -44,6 +46,8 @@ def test_query_engine():
     output_3 = query_engine(conditionals_test_3, firestore_collection)
     output_4 = query_engine(conditionals_test_4, firestore_collection)
     output_5 = query_engine(conditionals_test_5, firestore_collection)
+    output_6 = query_engine(conditionals_test_6, firestore_collection)
+    output_7 = query_engine(conditionals_test_7, firestore_collection)
 
     # Check output from queries
     if output_1[0].to_dict()["rank"] == 1 and len(output_1) == 10:
@@ -76,12 +80,24 @@ def test_query_engine():
         print("[FAILED] Triple field out of scope failed")
         amount_failed += 1
 
+    if len(output_6) == 0:
+        amount_passed +=1
+    else:
+        print("[FAILED] Invalid field")
+
+    if len(output_7) == 0:
+        amount_passed +=1
+    else:
+        print("[FAILED] Invalid field")
+
     if amount_passed == number_of_cases:
         print(f"[PASSED] All {number_of_cases} test cases passed for query engine")
         return True
     else:
         print(f"[FAILED] {amount_failed} test cases failed for query engine")
         return False
+
+
 
 
 def test_sort():
