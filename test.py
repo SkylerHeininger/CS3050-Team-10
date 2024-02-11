@@ -98,8 +98,6 @@ def test_query_engine():
         return False
 
 
-
-
 def test_sort():
     """
     This is sorting function for testing the sorting. This will create a bunch of university objects, sort them,
@@ -130,7 +128,7 @@ def test_sort():
         print("[FAILED] Query engine failed for sorting test")
         return False
 
-    # Sort by the following fields - rank is not included in this
+    # Sort by the following fields - rank is not included in this since it sorts opposite way
     sorting_fields = ["sustainability", "founding_date", "international_faculty_ratio", "academic_reputation"]
     # It is important to note that the parser will automatically limit fields to sort by to only being numerical
 
