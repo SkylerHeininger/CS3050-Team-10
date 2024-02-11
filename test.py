@@ -81,12 +81,12 @@ def test_query_engine():
         amount_failed += 1
 
     if len(output_6) == 0:
-        amount_passed +=1
+        amount_passed += 1
     else:
         print("[FAILED] Invalid field")
 
     if len(output_7) == 0:
-        amount_passed +=1
+        amount_passed += 1
     else:
         print("[FAILED] Invalid field")
 

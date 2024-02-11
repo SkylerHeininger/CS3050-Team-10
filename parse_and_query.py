@@ -259,11 +259,18 @@ def query_firestore(conditional, firestore):
     :param conditional: tuple of size 3, with field, operator, conditional
     :return: The query object for a single conditional
     """
-    # Filter for the conditional
-    filter_cond = FieldFilter(conditional[0], conditional[1], conditional[2])
-    # Create a query against the collection
-    query_output = firestore.where(filter=filter_cond)
-    return query_output
+    try:
+        # Filter for the conditional
+        filter_cond = FieldFilter(conditional[0], conditional[1], conditional[2])
+        # Create a query against the collection
+        query_output = firestore.where(filter=filter_cond)
+        return query_output
+    except ValueError as ve:
+        # print(f"ValueError {ve}")
+        return False
+    except Exception as e:
+        # print(f"Exception: {e}")
+        return False
 
 
 def query_engine(conditionals, firestore):
@@ -283,13 +290,15 @@ def query_engine(conditionals, firestore):
         # Query using query_firestore
         query_output = query_firestore(conditional, firestore)
 
-        # Query using nth conditional
-        for doc in query_output.get():
-            # Convert document into Uni object and append university_object to query_results
-            query_results.append(University.from_dict(doc.to_dict()))
+        # Ensure that query worked, if not it will automatically proceed to next conditional
+        if query_output != False: # Don't just say if query_output here
+            # Query using nth conditional
+            for doc in query_output.get():
+                # Convert document into Uni object and append university_object to query_results
+                query_results.append(University.from_dict(doc.to_dict()))
 
-        # Append query_results list to query_result_list, repeat process if there is more than one conditional
-        query_result_list.append(query_results)
+            # Append query_results list to query_result_list, repeat process if there is more than one conditional
+            query_result_list.append(query_results)
 
     # At this point, query_result_list is like the following: [[object1, object2, object3,...], [...], ...]
     # Loop through and take the first list, compare with the rest of things in list.
