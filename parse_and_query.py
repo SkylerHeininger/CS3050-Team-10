@@ -313,7 +313,7 @@ def query_engine(conditionals, firestore):
         return query_intersect
     else:
         # There were no queries performed
-        return False
+        return []
 
 
 def merge_sort_universities(universities_list, field):
