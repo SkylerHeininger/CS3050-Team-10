@@ -462,9 +462,10 @@ if __name__ == "__main__":
         user_input = input(">> ")  # Format this however we want
 
         # If input is exit or help, handle those and continue to next loop
-        if user_input[:4] == "HELP":
+        if user_input[:4].upper() == "HELP":
             print_help()
-        elif user_input[:4] == "EXIT":
+            continue
+        elif user_input[:4].upper() == "EXIT":
             print("Exiting query program.")
             sys.exit(0)
 
