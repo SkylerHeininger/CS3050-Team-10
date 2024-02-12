@@ -12,6 +12,7 @@ from University import University
 
 from warmup_utilities import check_files_exist, connect_firebase, firestore_collection_ref
 
+
 # import pyparsing
 # from pyparsing import one_of  # documentation: https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html
 
@@ -33,11 +34,14 @@ def parse(input_string):
                           "international_research_network employment_outcomes sustainability equal_rank country "
                           "founding_date student_population")"""
     valid_conditionals_list = ["==", "!=", ">=", "<=", ">", "<"]
-    valid_fields_dictionary = {"rank": "num", "university": "string", "overall_score": "num", "academic_reputation": "num",
+    valid_fields_dictionary = {"rank": "num", "university": "string", "overall_score": "num",
+                               "academic_reputation": "num",
                                "employer_reputation": "num", "faculty_student_ratio": "num",
-                               "citations_per_faculty": "num", "international_faculty_ratio": "num", "international_students_ratio": "num",
-                               "international_research_network": "num", "employment_outcomes": "num", "sustainability": "num",
-                               "equal_rank": "num", "country": "string" ,"founding_date": "num"}
+                               "citations_per_faculty": "num", "international_faculty_ratio": "num",
+                               "international_students_ratio": "num",
+                               "international_research_network": "num", "employment_outcomes": "num",
+                               "sustainability": "num",
+                               "equal_rank": "num", "country": "string", "founding_date": "num"}
 
     where_index = 10000
     display_index = 100000
@@ -125,7 +129,7 @@ def parse(input_string):
     # pack into dict
     query_dict = {'name_or_show_phrase': query_part_1, 'where_phrase': query_part_2, 'display_phrase': query_part_3,
                   'sort_phrase': query_part_4}
-    #print(query_dict)
+    # print(query_dict)
     # remove the start of part keywords from the query_dict
     query_dict['name_or_show_phrase'] = query_dict['name_or_show_phrase'][len('SHOW'):]
     if query_dict['where_phrase'] != '':
@@ -134,7 +138,7 @@ def parse(input_string):
         query_dict['display_phrase'] = query_dict['display_phrase'][len('DISPLAY'):]
     if query_dict['sort_phrase'] != '':
         query_dict['sort_phrase'] = query_dict['sort_phrase'][len('SORT'):]
-    #print(query_dict)
+    # print(query_dict)
 
     # Process and load first part of return tuple (show_int)
     name_show = (str(query_dict['name_or_show_phrase']).strip()).upper()
@@ -167,9 +171,9 @@ def parse(input_string):
                 # the conditional operator is in the conditional phrase string. Split and assign homes to each part
                 single_conditional_list = single_conditional_string.split(conditional_operator)
                 # create a new tuple entry
-                conditional_list_list.append([single_conditional_list[0], conditional_operator, single_conditional_list[1]])
+                conditional_list_list.append(
+                    [single_conditional_list[0], conditional_operator, single_conditional_list[1]])
                 found_valid_conditional = True
-
 
     # now we should go through the tuple list to clean things up (remove whitespace)
     for single_conditional_list in conditional_list_list:
@@ -210,7 +214,6 @@ def parse(input_string):
                                     single_conditional_list[0], "field")
         else:
             print("couldn't find a valid field corresponding to the argument \'", single_conditional_list[0])
-
 
     # Process and load third part of return tuple (display_list)
     display_list = []
@@ -276,7 +279,7 @@ def query_firestore(conditional, firestore):
         return query_output
     except Exception as e:
         print("Error while querying, please try again")
-        return "error" # string that won't be falsy or seen in output
+        return "error"  # string that won't be falsy or seen in output
 
 
 def query_engine(conditionals, firestore):
@@ -295,7 +298,7 @@ def query_engine(conditionals, firestore):
         # Query using query_firestore
         query_output = query_firestore(conditional, firestore)
         if query_output == 'error':
-            return 'error' # Early stopping, return string that won't be considered falsy
+            return 'error'  # Early stopping, return string that won't be considered falsy
 
         # Query using nth conditional
         for doc in query_output.get():
@@ -378,8 +381,6 @@ def sorting_engine(universities_list, ranking_field, show_int):
     """
     # Sort the universities
     universities_sorted = merge_sort_universities(universities_list, ranking_field)
-
-
 
     # Select the show_int amount of things, in descending order if show_int is positive
     # and ascending order if n is negative
@@ -478,6 +479,11 @@ if __name__ == "__main__":
 
         # Pass input to parser
         show_int, conditionals, display_fields, sorting_field = parse(user_input)
+
+        # check if output from parser is ("error", "error", "error", "error"), continue again
+        if show_int == "error" or conditionals == "error" or \
+                display_fields == "error" or sorting_field == "error":
+            continue
 
         # Pass parser conditionals to query
         query_results = query_engine(conditionals, firestore_collection)
