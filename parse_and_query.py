@@ -142,7 +142,10 @@ def parse(input_string):
         try:
             name_show = int(name_show)
         except:
-            raise Exception("Invalid input for show int")
+            if name_show == '*' or "ALL":
+                name_show = 106
+            else:
+                raise Exception("Invalid input for show int")
 
     # Process and load second part of return tuple (conditionals)
     # start by splitting into different conditional phrases
@@ -209,25 +212,13 @@ def parse(input_string):
 
 
     # Process and load third part of return tuple (display_list)
-    # loop through the dictionary of valid fields and search input string for valid fields
-    display_list = []
-    for valid_field in valid_fields_dictionary.keys():  # loop through valid field dict
-        if valid_field in query_dict['display_phrase'].lower():  # if valid field in the input display phrase
-            display_list.append(valid_field)  # then add it to the display list
-
-    # ensure name and rank are both in display_list
-    if 'rank' not in display_list:
-        display_list.append('rank')
-    if 'university' not in display_list:
-        display_list.append('university')
-
 
     # Process and load last part of return tuple (sort_field)
     # see if there is a valid field in the sort field
     sort_field = 'rank'  # rank is the default field to sort by
     found_valid_field = False
     for field in valid_fields_dictionary.keys():
-        if field in query_dict['sort_phrase'].lower() and not found_valid_field:
+        if field in query_dict['sort_phrase'] and not found_valid_field:
             sort_field = field
             found_valid_field = True
 
@@ -242,10 +233,8 @@ def parse(input_string):
 
     print('sort field:', sort_field)
 
-
     # return final tuple
-    return_tuple = (name_show, conditional_tuple_list, display_list, sort_field)
-    return return_tuple
+    return (name_show, conditional_tuple_list, [''], sort_field)
 
 
 def intersect_lists(list1, list2, comparison_func):
