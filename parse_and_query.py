@@ -215,6 +215,12 @@ def parse(input_string):
         if valid_field in query_dict['display_phrase'].lower():  # if valid field in the input display phrase
             display_list.append(valid_field)  # then add it to the display list
 
+    # ensure name and rank are both in display_list
+    if 'rank' not in display_list:
+        display_list.append('rank')
+    if 'university' not in display_list:
+        display_list.append('university')
+
 
     # Process and load last part of return tuple (sort_field)
     # see if there is a valid field in the sort field
@@ -236,8 +242,10 @@ def parse(input_string):
 
     print('sort field:', sort_field)
 
+
     # return final tuple
-    return (name_show, conditional_tuple_list, display_list, sort_field)
+    return_tuple = (name_show, conditional_tuple_list, display_list, sort_field)
+    return return_tuple
 
 
 def intersect_lists(list1, list2, comparison_func):
