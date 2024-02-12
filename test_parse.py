@@ -142,7 +142,6 @@ def parse(input_string):
     conditional_tuple_list: list[tuple] = []  # will use a tuple to finalize and return the conditionals
 
     # go through each conditional phrase list and find what kind of conditional it is
-    # if there is not a valid conditional operator, it will ignore the phrase
     for single_conditional_string in conditional_string_list:
         found_valid_conditional = False  # will be set to true when we find a valid conditional for this phrase
         for conditional_operator in valid_conditionals_list:  # loop thru valid conditionals to find a valid comparison operator
@@ -154,7 +153,7 @@ def parse(input_string):
                     [single_conditional_list[0], conditional_operator, single_conditional_list[1]])
                 found_valid_conditional = True
 
-    #print(conditional_list_list)
+    print(conditional_list_list)
 
     # now we should go through the tuple list to clean things up (remove whitespace)
     for single_conditional_list in conditional_list_list:
@@ -169,7 +168,7 @@ def parse(input_string):
                 single_conditional_list[0] = field
                 found_valid_field = True
 
-        # print(single_conditional_list, found_valid_field)
+        print(single_conditional_list, found_valid_field)
         if found_valid_field:
             # figure out what kind of comparisons we can do with the value we are comparing
             field_type = valid_fields_dictionary[single_conditional_list[0]]
@@ -187,9 +186,7 @@ def parse(input_string):
 
                     # if we are here, the field is valid, and so is the comparison value. Thus
                     # we must pack it into a tuple and add it to the final list of conditional tuples
-                    single_conditional_tuple = (single_conditional_list[0],
-                                                single_conditional_list[1],
-                                                single_conditional_list[2])
+                    single_conditional_tuple = (single_conditional_list[0], single_conditional_list[1], single_conditional_list[2])
                     conditional_tuple_list.append(single_conditional_tuple)
                 except ValueError:  # couldn't be cast. Raise Exception
                     raise Exception("Can't cast", single_conditional_list[2], "to a float when comparing to",
@@ -197,12 +194,8 @@ def parse(input_string):
         else:
             print("couldn't find a valid field corresponding to the argument \'", single_conditional_list[0])
 
-    #print(conditional_list_list)
+    print(conditional_list_list)
 
-    # TODO: Process and load third part of return tuple (display_list)
-    display_list = []
-
-    # Process and load last part of return tuple (sort_field)
     # see if there is a valid field in the sort field
     sort_field = 'rank'  # rank is the default field to sort by
     found_valid_field = False
@@ -220,12 +213,12 @@ def parse(input_string):
         print('Could not find a valid field to sort by. Will sort by default field: rank')
         sort_field = 'rank'
 
-    #print('sort field:', sort_field)
+    print('sort field:', sort_field)
 
-    # return final tuple
-    return (name_show, conditional_tuple_list, display_list, sort_field)
 
 def main():
+    test_string = "Hello and where but and poop"
+    print(test_string.split("and"))
     test_parse()
 
 
