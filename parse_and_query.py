@@ -244,7 +244,7 @@ def parse(input_string):
     print('sort field:', sort_field)
 
     # return final tuple
-    return (name_show, conditional_tuple_list, , sort_field)
+    return (name_show, conditional_tuple_list, display_list, sort_field)
 
 
 def intersect_lists(list1, list2, comparison_func):
