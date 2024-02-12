@@ -54,6 +54,7 @@ class University:
             to_return += 'Employment Outcomes: ' + str(self.employment_outcomes) + ', '
         if 'sustainability' in field_list:
             to_return += 'Sustainability: ' + str(self.sustainability) + ', '
+            # handling of optional field
         if 'equal_rank' in field_list:
             if self.equal_rank:
                 to_return += f'Tied in rank at position: {self.rank}, '
@@ -110,7 +111,7 @@ class University:
         :return: University object
         """
         # Handling for optional field, convert the empty string of no input to False, otherwise True
-        equal_rank = False if not source['equal_rank'] else True
+        equal_rank = "" if not source['equal_rank'] else True
 
         # Handling for student population field if it's a string
         student_population = source['student_population']

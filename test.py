@@ -2,7 +2,8 @@
 CS 3050 Team 10
 This file is for testing the functionality of all the functions of this project
 """
-from parse_and_query import query_engine, query_firestore, intersect_lists, sorting_engine, merge_sort_universities
+from parse_and_query import query_engine, query_firestore, intersect_lists, sorting_engine, \
+    merge_sort_universities, print_results
 from firebase_admin import credentials, db, firestore
 import firebase_admin
 from firebase_admin import credentials, db
