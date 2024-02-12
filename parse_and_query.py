@@ -12,8 +12,8 @@ from University import University
 
 from warmup_utilities import check_files_exist, connect_firebase, firestore_collection_ref
 
-import pyparsing
-from pyparsing import one_of  # documentation: https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html
+# import pyparsing
+# from pyparsing import one_of  # documentation: https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html
 
 
 # https://pyparsing-docs.readthedocs.io/en/latest/HowToUsePyparsing.html
@@ -147,6 +147,11 @@ def parse(input_string):
             else:
                 raise Exception("Invalid input for show int")
 
+    if is_name:
+        # if it is a name-type query, create a conditional based on the name
+        query_dict['where_phrase'] = query_dict['name_or_show_phrase'] + " == university"
+        name_show = 1
+
     # Process and load second part of return tuple (conditionals)
     # start by splitting into different conditional phrases
     conditional_string_list: list[str] = query_dict['where_phrase'].split("and")
@@ -212,6 +217,11 @@ def parse(input_string):
 
 
     # Process and load third part of return tuple (display_list)
+    display_list = []
+    for valid_field in valid_fields_dictionary.keys():
+        # if junk in hte field, then ignore
+        if valid_field in query_dict['display_phrase'].lower():
+            display_list.append(valid_field)
 
     # Process and load last part of return tuple (sort_field)
     # see if there is a valid field in the sort field
@@ -234,7 +244,7 @@ def parse(input_string):
     print('sort field:', sort_field)
 
     # return final tuple
-    return (name_show, conditional_tuple_list, [''], sort_field)
+    return (name_show, conditional_tuple_list, display_list, sort_field)
 
 
 def intersect_lists(list1, list2, comparison_func):
