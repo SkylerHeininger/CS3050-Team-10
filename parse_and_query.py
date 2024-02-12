@@ -37,7 +37,7 @@ def parse(input_string):
                                "employer_reputation": "num", "faculty_student_ratio": "num",
                                "citations_per_faculty": "num", "international_faculty_ratio": "num", "international_students_ratio": "num",
                                "international_research_network": "num", "employment_outcomes": "num", "sustainability": "num",
-                               "equal_rank": "num", "country": "string","founding_date": "num"}
+                               "equal_rank": "num", "country": "string" ,"founding_date": "num"}
 
     where_index = 10000
     display_index = 100000
@@ -218,11 +218,6 @@ def parse(input_string):
         # if junk in hte field, then ignore
         if valid_field in query_dict['display_phrase'].lower():
             display_list.append(valid_field)
-
-    if 'rank' not in display_list:
-        display_list.append('rank')
-    if 'university' not in display_list:
-        display_list.append('university')
 
     # Process and load last part of return tuple (sort_field)
     # see if there is a valid field in the sort field
