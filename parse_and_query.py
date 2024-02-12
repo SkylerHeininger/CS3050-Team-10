@@ -291,7 +291,6 @@ def query_engine(conditionals, firestore):
     :param firestore: reference path to firebase over which queries will be performed
     :return: List of University objects
     """
-
     query_result_list = []
     for conditional in conditionals:
         # Create list to store docs queried for nth conditional in conditionals
@@ -383,6 +382,8 @@ def sorting_engine(universities_list, ranking_field, show_int):
     """
     # Sort the universities
     universities_sorted = merge_sort_universities(universities_list, ranking_field)
+
+
 
     # Select the show_int amount of things, in descending order if show_int is positive
     # and ascending order if n is negative
