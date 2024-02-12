@@ -58,7 +58,6 @@ def parse(input_string):
     if 'WHERE' in input_string.upper():
         contains_where = True
         where_index = input_string.upper().find('WHERE')
-        print('where index: ', where_index)
     else:
         contains_where = False
 
@@ -83,13 +82,14 @@ def parse(input_string):
     # Check to make sure the keywords are in the correct order. Further, we know that SHOW or NAME is the first so we don't have to check that
     if contains_where and contains_display and (where_index > display_index):
         # display comes before where which is out of order :(
-        raise Exception('ERROR IN PARSE: Where clause comes after display clause.')
+        print('ERROR IN PARSE: Where clause comes after display clause.')
+        # return ("error", "error", "error", "error")
     if contains_where and contains_sort and (where_index > sort_index):
         # sort comes before where which is out of order :(
-        raise Exception('ERROR IN PARSE: Where clause comes after sort clause.')
+        print('ERROR IN PARSE: Where clause comes after sort clause.')
     if contains_display and contains_sort and (display_index > sort_index):
         # sort comes before display which is out of order :(
-        raise Exception('ERROR IN PARSE: Display clause comes after sort clause.')
+        print('ERROR IN PARSE: Display clause comes after sort clause.')
 
     # Use separate input string into parts of query
     # first do part 1
@@ -170,7 +170,6 @@ def parse(input_string):
                 conditional_list_list.append([single_conditional_list[0], conditional_operator, single_conditional_list[1]])
                 found_valid_conditional = True
 
-    print(conditional_list_list)
 
     # now we should go through the tuple list to clean things up (remove whitespace)
     for single_conditional_list in conditional_list_list:
@@ -185,7 +184,6 @@ def parse(input_string):
                 single_conditional_list[0] = field
                 found_valid_field = True
 
-        print(single_conditional_list, found_valid_field)
         if found_valid_field:
             # figure out what kind of comparisons we can do with the value we are comparing
             field_type = valid_fields_dictionary[single_conditional_list[0]]
@@ -213,8 +211,6 @@ def parse(input_string):
         else:
             print("couldn't find a valid field corresponding to the argument \'", single_conditional_list[0])
 
-    print(conditional_list_list)
-
 
     # Process and load third part of return tuple (display_list)
     display_list = []
@@ -241,10 +237,10 @@ def parse(input_string):
         print('Could not find a valid field to sort by. Will sort by default field: rank')
         sort_field = 'rank'
 
-    print('sort field:', sort_field)
-
     # return final tuple
-    return (name_show, conditional_tuple_list, display_list, sort_field)
+    to_return = (name_show, conditional_tuple_list, display_list, sort_field)
+    print('returning from parse: ', to_return)
+    return to_return
 
 
 def intersect_lists(list1, list2, comparison_func):
