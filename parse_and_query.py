@@ -209,13 +209,19 @@ def parse(input_string):
 
 
     # Process and load third part of return tuple (display_list)
+    # loop through the dictionary of valid fields and search input string for valid fields
+    display_list = []
+    for valid_field in valid_fields_dictionary.keys():  # loop through valid field dict
+        if valid_field in query_dict['display_phrase'].lower():  # if valid field in the input display phrase
+            display_list.append(valid_field)  # then add it to the display list
+
 
     # Process and load last part of return tuple (sort_field)
     # see if there is a valid field in the sort field
     sort_field = 'rank'  # rank is the default field to sort by
     found_valid_field = False
     for field in valid_fields_dictionary.keys():
-        if field in query_dict['sort_phrase'] and not found_valid_field:
+        if field in query_dict['sort_phrase'].lower() and not found_valid_field:
             sort_field = field
             found_valid_field = True
 
@@ -231,7 +237,7 @@ def parse(input_string):
     print('sort field:', sort_field)
 
     # return final tuple
-    return (name_show, conditional_tuple_list, [''], sort_field)
+    return (name_show, conditional_tuple_list, display_list, sort_field)
 
 
 def intersect_lists(list1, list2, comparison_func):
@@ -259,18 +265,11 @@ def query_firestore(conditional, firestore):
     :param conditional: tuple of size 3, with field, operator, conditional
     :return: The query object for a single conditional
     """
-    try:
-        # Filter for the conditional
-        filter_cond = FieldFilter(conditional[0], conditional[1], conditional[2])
-        # Create a query against the collection
-        query_output = firestore.where(filter=filter_cond)
-        return query_output
-    except ValueError as ve:
-        # print(f"ValueError {ve}")
-        return False
-    except Exception as e:
-        # print(f"Exception: {e}")
-        return False
+    # Filter for the conditional
+    filter_cond = FieldFilter(conditional[0], conditional[1], conditional[2])
+    # Create a query against the collection
+    query_output = firestore.where(filter=filter_cond)
+    return query_output
 
 
 def query_engine(conditionals, firestore):
@@ -290,15 +289,13 @@ def query_engine(conditionals, firestore):
         # Query using query_firestore
         query_output = query_firestore(conditional, firestore)
 
-        # Ensure that query worked, if not it will automatically proceed to next conditional
-        if query_output != False: # Don't just say if query_output here
-            # Query using nth conditional
-            for doc in query_output.get():
-                # Convert document into Uni object and append university_object to query_results
-                query_results.append(University.from_dict(doc.to_dict()))
+        # Query using nth conditional
+        for doc in query_output.get():
+            # Convert document into Uni object and append university_object to query_results
+            query_results.append(University.from_dict(doc.to_dict()))
 
-            # Append query_results list to query_result_list, repeat process if there is more than one conditional
-            query_result_list.append(query_results)
+        # Append query_results list to query_result_list, repeat process if there is more than one conditional
+        query_result_list.append(query_results)
 
     # At this point, query_result_list is like the following: [[object1, object2, object3,...], [...], ...]
     # Loop through and take the first list, compare with the rest of things in list.
@@ -313,7 +310,7 @@ def query_engine(conditionals, firestore):
         return query_intersect
     else:
         # There were no queries performed
-        return []
+        return False
 
 
 def merge_sort_universities(universities_list, field):
