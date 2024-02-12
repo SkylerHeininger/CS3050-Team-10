@@ -272,11 +272,15 @@ def query_firestore(conditional, firestore):
     :param conditional: tuple of size 3, with field, operator, conditional
     :return: The query object for a single conditional
     """
-    # Filter for the conditional
-    filter_cond = FieldFilter(conditional[0], conditional[1], conditional[2])
-    # Create a query against the collection
-    query_output = firestore.where(filter=filter_cond)
-    return query_output
+    try:
+        # Filter for the conditional
+        filter_cond = FieldFilter(conditional[0], conditional[1], conditional[2])
+        # Create a query against the collection
+        query_output = firestore.where(filter=filter_cond)
+        return query_output
+    except Exception as e:
+        print("Error while querying, please try again")
+        return "error" # string that won't be falsy or seen in output
 
 
 def query_engine(conditionals, firestore):
@@ -295,6 +299,8 @@ def query_engine(conditionals, firestore):
 
         # Query using query_firestore
         query_output = query_firestore(conditional, firestore)
+        if query_output == 'error':
+            return 'error' # Early stopping, return string that won't be considered falsy
 
         # Query using nth conditional
         for doc in query_output.get():
@@ -317,7 +323,7 @@ def query_engine(conditionals, firestore):
         return query_intersect
     else:
         # There were no queries performed
-        return False
+        return []
 
 
 def merge_sort_universities(universities_list, field):
@@ -417,10 +423,20 @@ def print_results(universities_list, display_fields):
     This function prints the the results of the query.
     :param universities_list: The queried and sorted list of University objects
     :param display_fields: The fields to display
-    :return: Null
+    :return: Boolean of if the items printed correctly or not. This is more for helping testing than with functionality.
     """
+    # Handle empty query list
+    if universities_list == []:
+        print("Query resulted in no universities.")
+        return True
+
     for university in universities_list:
-        print(university.generate_university_str(display_fields))
+        try:
+            print(university.generate_university_str(display_fields))
+        except Exception as e:
+            print("Error occurred, please try again")
+            return False
+    return True
 
 
 def print_help():
@@ -468,8 +484,14 @@ if __name__ == "__main__":
         # Pass parser conditionals to query
         query_results = query_engine(conditionals, firestore_collection)
 
+        # Handle error in query engine
+        if query_results == 'error':
+            print("An error occurred, please try again")
+            continue
+
         # Pass query objects to sort function
         sorted_results = sorting_engine(query_results, sorting_field, show_int)
 
-        # Pass sorted objects to print function
+        # Pass sorted objects to print function - don't really need to use the boolean output
+        # since it will re-prompt anyways
         print_results(sorted_results, display_fields)
