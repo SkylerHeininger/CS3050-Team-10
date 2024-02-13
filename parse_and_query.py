@@ -30,7 +30,7 @@ def parse(input_string):
                                "employer_reputation": "num", "faculty_student_ratio": "num",
                                "citations_per_faculty": "num", "international_faculty_ratio": "num", "international_students_ratio": "num",
                                "international_research_network": "num", "employment_outcomes": "num", "sustainability": "num",
-                               "equal_rank": "num", "country": "string" ,"founding_date": "num"}
+                               "equal_rank": "num", "country": "string" ,"founding_date": "num", "student_population": "num"}
 
     where_index = 10000
     display_index = 100000
