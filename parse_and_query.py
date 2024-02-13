@@ -150,7 +150,7 @@ def parse(input_string):
 
     if is_name:
         # if it is a name-type query, create a conditional based on the name
-        query_dict['where_phrase'] = query_dict['name_or_show_phrase'] + " == university"
+        query_dict['where_phrase'] = "university == " + query_dict['name_or_show_phrase']
         name_show = 1
 
     # Process and load second part of return tuple (conditionals)

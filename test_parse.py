@@ -1,6 +1,6 @@
 
 def test_parse():
-    print(parse('show ALL where rank >= 6 and country == United States sort ;'))
+    print(parse('name uvm where rank >= 6 and country == United States sort ;'))
     #print(parse('show 10 where rank >= 6 and overall_score <5 sort international_faculty_ratio'))
     #print(parse('show 10 where rank >= 6 and overall_score <5 sort university'))
     #print(parse('name uvmletsgooo where pee pee poo poo'))
@@ -141,8 +141,10 @@ def parse(input_string):
 
     if is_name:
         # if it is a name-type query, create a conditional based on the name
-        query_dict['where_phrase'] = query_dict['name_or_show_phrase'] + " == university"
+        query_dict['where_phrase'] = "university == " + query_dict['name_or_show_phrase']
         name_show = 1
+
+    print(query_dict)
 
     # Process and load second part of return tuple (conditionals)
     # start by splitting into different conditional phrases
