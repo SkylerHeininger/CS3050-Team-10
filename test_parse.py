@@ -133,7 +133,11 @@ def parse(input_string):
         try:
             name_show = int(name_show)
         except:
-            raise Exception("Invalid input for show int")
+            if name_show == '*' or "ALL":
+                name_show = 106
+            else:
+                raise Exception("Invalid input for show int")
+    print(name_show)
 
     # Process and load second part of return tuple (conditionals)
     # start by splitting into different conditional phrases

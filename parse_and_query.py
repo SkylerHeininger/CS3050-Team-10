@@ -145,7 +145,10 @@ def parse(input_string):
             if name_show == '*' or "ALL":
                 name_show = 106
             else:
-                raise Exception("Invalid input for show int")
+                name_show = 'error'
+    elif is_name:
+        query_dict['where_phrase'] = str('university ==' + name_show)
+        name_show = 1
 
     if is_name:
         # if it is a name-type query, create a conditional based on the name
