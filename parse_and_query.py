@@ -25,13 +25,6 @@ def parse(input_string):
     :param input_string:
     :return:
     """
-    # Create pyparse dictionaries
-    """
-    valid_conditionals = one_of("== != > < >= <=")
-    valid_fields = one_of("rank university overall_score academic_reputation employer_reputation faculty_student_ratio "
-                          "citations_per_faculty international_faculty_ratio international_students_ratio "
-                          "international_research_network employment_outcomes sustainability equal_rank country "
-                          "founding_date student_population")"""
     valid_conditionals_list = ["==", "!=", ">=", "<=", ">", "<"]
     valid_fields_dictionary = {"rank": "num", "university": "string", "overall_score": "num", "academic_reputation": "num",
                                "employer_reputation": "num", "faculty_student_ratio": "num",
@@ -43,6 +36,8 @@ def parse(input_string):
     display_index = 100000
     sort_index = 100000
 
+    RETURN_ERROR_TUPLE = ('error', 'error', 'error', 'error')  # use to return when we run into an issue
+
     # PART 1: detect different keywords that determine what kinds of clauses are in the input string
     # Detect if it is a NAME or SHOW type of query
     if input_string[0: 4].upper() == 'NAME':
@@ -52,7 +47,8 @@ def parse(input_string):
         is_show = True
         is_name = False
     else:
-        raise Exception('ERROR IN PARSE: Could not detect query type. Query must start with NAME, SHOW, or HELP')
+        print("ERROR IN PARSE: Could not detect query type. Query must start with NAME, SHOW, or HELP")
+        return RETURN_ERROR_TUPLE
 
     # Detect if the query has a WHERE clause
     if 'WHERE' in input_string.upper():
@@ -83,13 +79,15 @@ def parse(input_string):
     if contains_where and contains_display and (where_index > display_index):
         # display comes before where which is out of order :(
         print('ERROR IN PARSE: Where clause comes after display clause.')
-        # return ("error", "error", "error", "error")
+        return RETURN_ERROR_TUPLE
     if contains_where and contains_sort and (where_index > sort_index):
         # sort comes before where which is out of order :(
         print('ERROR IN PARSE: Where clause comes after sort clause.')
+        return RETURN_ERROR_TUPLE
     if contains_display and contains_sort and (display_index > sort_index):
         # sort comes before display which is out of order :(
         print('ERROR IN PARSE: Display clause comes after sort clause.')
+        return RETURN_ERROR_TUPLE
 
     # Use separate input string into parts of query
     # first do part 1
@@ -193,9 +191,15 @@ def parse(input_string):
             # if we are comparing a string, make sure we are just using == or !=
             if field_type == "string":
                 if single_conditional_list[1] != "==" and single_conditional_list[1] != "!=":
-                    # user is trying to use an inequality on a string field. Raise exception
-                    raise Exception("Invalid Comparison. Can't use and inequality to evaluate",
-                                    single_conditional_list[0], "field")
+                    # user is trying to use an inequality on a string field. return error
+                    print("Invalid Comparison. Can't use and inequality to evaluate",
+                          single_conditional_list[0], "field")
+                    return RETURN_ERROR_TUPLE
+                # if we are here, then the string field is being used correctly. Thus we should add to the tuple list
+                single_conditional_tuple = (single_conditional_list[0],
+                                            single_conditional_list[1],
+                                            single_conditional_list[2])
+                conditional_tuple_list.append(single_conditional_tuple)
 
             else:  # field type is a number. Ensure the value they are comparing to can be cast to a float
                 try:
@@ -208,9 +212,10 @@ def parse(input_string):
                                                 single_conditional_list[1],
                                                 single_conditional_list[2])
                     conditional_tuple_list.append(single_conditional_tuple)
-                except ValueError:  # couldn't be cast. Raise Exception
-                    raise Exception("Can't cast", single_conditional_list[2], "to a float when comparing to",
+                except ValueError:  # couldn't be cast. Raise error
+                    print("Can't cast", single_conditional_list[2], "to a float when comparing to",
                                     single_conditional_list[0], "field")
+                    return RETURN_ERROR_TUPLE
         else:
             print("couldn't find a valid field corresponding to the argument \'", single_conditional_list[0])
 
