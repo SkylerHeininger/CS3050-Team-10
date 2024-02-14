@@ -12,6 +12,7 @@ from University import University
 
 from warmup_utilities import check_files_exist, connect_firebase, firestore_collection_ref
 
+
 # import pyparsing
 # from pyparsing import one_of  # documentation: https://pyparsing-docs.readthedocs.io/en/latest/pyparsing.html
 
@@ -26,11 +27,16 @@ def parse(input_string):
     :return:
     """
     valid_conditionals_list = ["==", "!=", ">=", "<=", ">", "<"]
-    valid_fields_dictionary = {"rank": "num", "university": "string", "overall_score": "num", "academic_reputation": "num",
+    valid_fields_dictionary = {"rank": "num", "university": "string", "overall_score": "num",
+                               "academic_reputation": "num",
                                "employer_reputation": "num", "faculty_student_ratio": "num",
-                               "citations_per_faculty": "num", "international_faculty_ratio": "num", "international_students_ratio": "num",
-                               "international_research_network": "num", "employment_outcomes": "num", "sustainability": "num",
-                               "equal_rank": "num", "country": "string" ,"founding_date": "num", "student_population": "num"}
+                               "citations_per_faculty": "num", "international_faculty_ratio": "num",
+                               "international_students_ratio": "num",
+                               "international_research_network": "num", "employment_outcomes": "num",
+                               "sustainability": "num",
+                               "equal_rank": "string", "country": "string", "founding_date": "num",
+                               "student_population": "num"}
+    # equal rank is not a string but the code will handle it correctly if we call it a string here
 
     where_index = 10000
     display_index = 100000
@@ -123,7 +129,7 @@ def parse(input_string):
     # pack into dict
     query_dict = {'name_or_show_phrase': query_part_1, 'where_phrase': query_part_2, 'display_phrase': query_part_3,
                   'sort_phrase': query_part_4}
-    #print(query_dict)
+    # print(query_dict)
     # remove the start of part keywords from the query_dict
     query_dict['name_or_show_phrase'] = query_dict['name_or_show_phrase'][len('SHOW'):]
     if query_dict['where_phrase'] != '':
@@ -132,7 +138,7 @@ def parse(input_string):
         query_dict['display_phrase'] = query_dict['display_phrase'][len('DISPLAY'):]
     if query_dict['sort_phrase'] != '':
         query_dict['sort_phrase'] = query_dict['sort_phrase'][len('SORT'):]
-    #print(query_dict)
+    # print(query_dict)
 
     # Process and load first part of return tuple (show_int)
     name_show = (str(query_dict['name_or_show_phrase']).strip()).upper()
@@ -168,9 +174,9 @@ def parse(input_string):
                 # the conditional operator is in the conditional phrase string. Split and assign homes to each part
                 single_conditional_list = single_conditional_string.split(conditional_operator)
                 # create a new tuple entry
-                conditional_list_list.append([single_conditional_list[0], conditional_operator, single_conditional_list[1]])
+                conditional_list_list.append(
+                    [single_conditional_list[0], conditional_operator, single_conditional_list[1]])
                 found_valid_conditional = True
-
 
     # now we should go through the tuple list to clean things up (remove whitespace)
     for single_conditional_list in conditional_list_list:
@@ -214,11 +220,10 @@ def parse(input_string):
                     conditional_tuple_list.append(single_conditional_tuple)
                 except ValueError:  # couldn't be cast. Raise error
                     print("Can't cast", single_conditional_list[2], "to a float when comparing to",
-                                    single_conditional_list[0], "field")
+                          single_conditional_list[0], "field")
                     return RETURN_ERROR_TUPLE
         else:
             print("couldn't find a valid field corresponding to the argument \'", single_conditional_list[0])
-
 
     # Process and load third part of return tuple (display_list)
     display_list = []
@@ -247,7 +252,7 @@ def parse(input_string):
 
     # return final tuple
     to_return = (name_show, conditional_tuple_list, display_list, sort_field)
-    print('returning from parse: ', to_return)
+    # print('returning from parse: ', to_return)
     return to_return
 
 
@@ -284,7 +289,7 @@ def query_firestore(conditional, firestore):
         return query_output
     except Exception as e:
         print("Error while querying, please try again")
-        return "error" # string that won't be falsy or seen in output
+        return "error"  # string that won't be falsy or seen in output
 
 
 def query_engine(conditionals, firestore):
@@ -303,7 +308,7 @@ def query_engine(conditionals, firestore):
         # Query using query_firestore
         query_output = query_firestore(conditional, firestore)
         if query_output == 'error':
-            return 'error' # Early stopping, return string that won't be considered falsy
+            return 'error'  # Early stopping, return string that won't be considered falsy
 
         # Query using nth conditional
         for doc in query_output.get():
@@ -386,8 +391,6 @@ def sorting_engine(universities_list, ranking_field, show_int):
     """
     # Sort the universities
     universities_sorted = merge_sort_universities(universities_list, ranking_field)
-
-
 
     # Select the show_int amount of things, in descending order if show_int is positive
     # and ascending order if n is negative
@@ -480,13 +483,13 @@ if __name__ == "__main__":
     query_string = ""
     while query_string != "exit":
         # Get input from user
-        user_input = input(">> ")  # Format this however we want
+        user_input = input("\n>> ")  # Format this however we want
 
         # If input is exit or help, handle those and continue to next loop
-        if user_input[:4].upper() == "HELP":
+        if user_input.strip()[:4].upper() == "HELP":
             print_help()
             continue
-        elif user_input[:4].upper() == "EXIT":
+        elif user_input.strip()[:4].upper() == "EXIT":
             print("Exiting query program.")
             break
 
