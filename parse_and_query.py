@@ -246,7 +246,8 @@ def parse(input_string):
         print("Can't sort by a string.")
         found_valid_field = False
 
-    if not found_valid_field:
+    # notify user if sort field can't be found, only if it is show-type query
+    if not found_valid_field and is_show:
         print('Could not find a valid field to sort by. Will sort by default field: rank')
         sort_field = 'rank'
 
