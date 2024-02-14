@@ -142,14 +142,15 @@ def parse(input_string):
 
     # Process and load first part of return tuple (show_int)
     name_show = (str(query_dict['name_or_show_phrase']).strip()).upper()
+    print(name_show)
     if is_show:
         try:
             name_show = int(name_show)
         except:
-            if name_show == '*' or 'ALL':
-                name_show = 106
-            elif name_show == '-*' or '-ALL':
+            if name_show == '-*' or name_show == '-ALL':
                 name_show = -106
+            elif name_show == '*' or name_show == 'ALL':
+                name_show = 106
             else:
                 name_show = 'error'
 
@@ -251,7 +252,7 @@ def parse(input_string):
 
     # return final tuple
     to_return = (name_show, conditional_tuple_list, display_list, sort_field)
-    # print('returning from parse: ', to_return)
+    print('returning from parse: ', to_return)
     return to_return
 
 
