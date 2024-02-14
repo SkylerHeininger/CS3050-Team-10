@@ -451,10 +451,16 @@ def print_help():
     """
     output_string = f"Here are some commands with their uses:\n" \
                     f"show - how many items to return, make this negative for descending order\n" \
+                    f"     - make show negative to reverse the order of outputn\n" \
+                    f"     - all or * will return all items\n" \
                     f"name - the name of the university to return information on\n" \
-                    f"where - the conditionals over which you want to compare universities\n" \
-                    f"display - the fields you wish to have displayed to console" \
-                    f"sort - the field over which you want the output to be sorted, defaults to ranking\n"
+                    f"     - conditionals and sorting will be ignored\n" \
+                    f"where - the conditionals over which you want to compare universities, separate conditionals using 'and'\n" \
+                    f"display - the fields you wish to have displayed to console\n" \
+                    f"sort - the field over which you want the output to be sorted, defaults to ranking\n" \
+                    f"\nQueries need to be in the order name/show, where, display,sort. Example:\n" \
+                    f"show 10 where rank <= 10 display sustainability sort faculty_student_ratio\n" \
+                    f"name Columbia University display international_research_network\n"
     print(output_string)
 
 
@@ -487,7 +493,7 @@ if __name__ == "__main__":
         # Pass input to parser
         show_int, conditionals, display_fields, sorting_field = parse(user_input)
 
-        #
+        # If error, don't pass to query
         if show_int == "error" or conditionals == "error" or display_fields == "error" or sorting_field == "error":
             continue
 
