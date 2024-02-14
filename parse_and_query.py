@@ -482,17 +482,21 @@ if __name__ == "__main__":
             continue
         elif user_input[:4].upper() == "EXIT":
             print("Exiting query program.")
-            sys.exit(0)
+            break
 
         # Pass input to parser
         show_int, conditionals, display_fields, sorting_field = parse(user_input)
+
+        #
+        if show_int == "error" or conditionals == "error" or display_fields == "error" or sorting_field == "error":
+            continue
 
         # Pass parser conditionals to query
         query_results = query_engine(conditionals, firestore_collection)
 
         # Handle error in query engine
         if query_results == 'error':
-            print("An error occurred, please try again")
+            # print("An error occurred, please try again")
             continue
 
         # Pass query objects to sort function
