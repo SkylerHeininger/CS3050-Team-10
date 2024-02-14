@@ -1,10 +1,9 @@
-from pyparsing import one_of
 
 def test_parse():
     print(parse('show 10 where rank >= 6 and overall_score <5 sort ;lkasdf'))
     print(parse('show 10 where rank >= 6 and overall_score <5 sort international_faculty_ratio'))
     print(parse('show 10 where rank >= 6 and overall_score <5 sort university'))
-    print(parse('name uvmletsgooo where pee pee poo poo'))
+    print(parse('name uvmletsgooo'))
     #print(parse('WH ;KLASDF;KLJ WHERE ;LKASD;LKASD SORT ;ALSKDF'))
 
 
@@ -14,13 +13,6 @@ def parse(input_string):
     :param input_string:
     :return:
     """
-    # Create pyparse dictionaries
-    """
-    valid_conditionals = one_of("== != > < >= <=")
-    valid_fields = one_of("rank university overall_score academic_reputation employer_reputation faculty_student_ratio "
-                          "citations_per_faculty international_faculty_ratio international_students_ratio "
-                          "international_research_network employment_outcomes sustainability equal_rank country "
-                          "founding_date student_population")"""
     valid_conditionals_list = ["==", "!=", ">=", "<=", ">", "<"]
     valid_fields_dictionary = {"rank": "num", "university": "string", "overall_score": "num",
                                "academic_reputation": "num",
@@ -29,11 +21,15 @@ def parse(input_string):
                                "international_students_ratio": "num",
                                "international_research_network": "num", "employment_outcomes": "num",
                                "sustainability": "num",
-                               "equal_rank": "num", "country": "string", "founding_date": "num"}
+                               "equal_rank": "string", "country": "string", "founding_date": "num",
+                               "student_population": "num"}
+    # equal rank is not a string but the code will handle it correctly if we call it a string here
 
     where_index = 10000
     display_index = 100000
     sort_index = 100000
+
+    RETURN_ERROR_TUPLE = ('error', 'error', 'error', 'error')  # use to return when we run into an issue
 
     # PART 1: detect different keywords that determine what kinds of clauses are in the input string
     # Detect if it is a NAME or SHOW type of query
@@ -44,7 +40,8 @@ def parse(input_string):
         is_show = True
         is_name = False
     else:
-        raise Exception('ERROR IN PARSE: Could not detect query type. Query must start with NAME, SHOW, or HELP')
+        print("ERROR IN PARSE: Could not detect query type. Query must start with NAME, SHOW, or HELP")
+        return RETURN_ERROR_TUPLE
 
     # Detect if the query has a WHERE clause
     if 'WHERE' in input_string.upper():
@@ -74,13 +71,16 @@ def parse(input_string):
     # Check to make sure the keywords are in the correct order. Further, we know that SHOW or NAME is the first so we don't have to check that
     if contains_where and contains_display and (where_index > display_index):
         # display comes before where which is out of order :(
-        raise Exception('ERROR IN PARSE: Where clause comes after display clause.')
+        print('ERROR IN PARSE: Where clause comes after display clause.')
+        return RETURN_ERROR_TUPLE
     if contains_where and contains_sort and (where_index > sort_index):
         # sort comes before where which is out of order :(
-        raise Exception('ERROR IN PARSE: Where clause comes after sort clause.')
+        print('ERROR IN PARSE: Where clause comes after sort clause.')
+        return RETURN_ERROR_TUPLE
     if contains_display and contains_sort and (display_index > sort_index):
         # sort comes before display which is out of order :(
-        raise Exception('ERROR IN PARSE: Display clause comes after sort clause.')
+        print('ERROR IN PARSE: Display clause comes after sort clause.')
+        return RETURN_ERROR_TUPLE
 
     # Use separate input string into parts of query
     # first do part 1
@@ -129,15 +129,22 @@ def parse(input_string):
 
     # Process and load first part of return tuple (show_int)
     name_show = (str(query_dict['name_or_show_phrase']).strip()).upper()
+    print(name_show)
     if is_show:
         try:
             name_show = int(name_show)
         except:
-            if name_show == '*' or "ALL":
+            if name_show == '-*' or name_show == '-ALL':
+                name_show = -106
+            elif name_show == '*' or name_show == 'ALL':
                 name_show = 106
             else:
-                raise Exception("Invalid input for show int")
-    print(name_show)
+                name_show = 'error'
+
+    if is_name:
+        # if it is a name-type query, create a conditional based on the name
+        query_dict['where_phrase'] = "university == " + query_dict['name_or_show_phrase']
+        name_show = 1
 
     # Process and load second part of return tuple (conditionals)
     # start by splitting into different conditional phrases
@@ -146,6 +153,7 @@ def parse(input_string):
     conditional_tuple_list: list[tuple] = []  # will use a tuple to finalize and return the conditionals
 
     # go through each conditional phrase list and find what kind of conditional it is
+    # if there is not a valid conditional operator, it will ignore the phrase
     for single_conditional_string in conditional_string_list:
         found_valid_conditional = False  # will be set to true when we find a valid conditional for this phrase
         for conditional_operator in valid_conditionals_list:  # loop thru valid conditionals to find a valid comparison operator
@@ -156,8 +164,6 @@ def parse(input_string):
                 conditional_list_list.append(
                     [single_conditional_list[0], conditional_operator, single_conditional_list[1]])
                 found_valid_conditional = True
-
-    print(conditional_list_list)
 
     # now we should go through the tuple list to clean things up (remove whitespace)
     for single_conditional_list in conditional_list_list:
@@ -172,16 +178,21 @@ def parse(input_string):
                 single_conditional_list[0] = field
                 found_valid_field = True
 
-        print(single_conditional_list, found_valid_field)
         if found_valid_field:
             # figure out what kind of comparisons we can do with the value we are comparing
             field_type = valid_fields_dictionary[single_conditional_list[0]]
             # if we are comparing a string, make sure we are just using == or !=
             if field_type == "string":
                 if single_conditional_list[1] != "==" and single_conditional_list[1] != "!=":
-                    # user is trying to use an inequality on a string field. Raise exception
-                    raise Exception("Invalid Comparison. Can't use and inequality to evaluate",
-                                    single_conditional_list[0], "field")
+                    # user is trying to use an inequality on a string field. return error
+                    print("Invalid Comparison. Can't use and inequality to evaluate",
+                          single_conditional_list[0], "field")
+                    return RETURN_ERROR_TUPLE
+                # if we are here, then the string field is being used correctly. Thus we should add to the tuple list
+                single_conditional_tuple = (single_conditional_list[0],
+                                            single_conditional_list[1],
+                                            single_conditional_list[2])
+                conditional_tuple_list.append(single_conditional_tuple)
 
             else:  # field type is a number. Ensure the value they are comparing to can be cast to a float
                 try:
@@ -190,16 +201,25 @@ def parse(input_string):
 
                     # if we are here, the field is valid, and so is the comparison value. Thus
                     # we must pack it into a tuple and add it to the final list of conditional tuples
-                    single_conditional_tuple = (single_conditional_list[0], single_conditional_list[1], single_conditional_list[2])
+                    single_conditional_tuple = (single_conditional_list[0],
+                                                single_conditional_list[1],
+                                                single_conditional_list[2])
                     conditional_tuple_list.append(single_conditional_tuple)
-                except ValueError:  # couldn't be cast. Raise Exception
-                    raise Exception("Can't cast", single_conditional_list[2], "to a float when comparing to",
-                                    single_conditional_list[0], "field")
+                except ValueError:  # couldn't be cast. Raise error
+                    print("Can't cast", single_conditional_list[2], "to a float when comparing to",
+                          single_conditional_list[0], "field")
+                    return RETURN_ERROR_TUPLE
         else:
             print("couldn't find a valid field corresponding to the argument \'", single_conditional_list[0])
 
-    print(conditional_list_list)
+    # Process and load third part of return tuple (display_list)
+    display_list = []
+    for valid_field in valid_fields_dictionary.keys():
+        # if junk in hte field, then ignore
+        if valid_field in query_dict['display_phrase'].lower():
+            display_list.append(valid_field)
 
+    # Process and load last part of return tuple (sort_field)
     # see if there is a valid field in the sort field
     sort_field = 'rank'  # rank is the default field to sort by
     found_valid_field = False
@@ -213,16 +233,18 @@ def parse(input_string):
         print("Can't sort by a string.")
         found_valid_field = False
 
-    if not found_valid_field:
+    # notify user if sort field can't be found, only if it is show-type query
+    if not found_valid_field and is_show:
         print('Could not find a valid field to sort by. Will sort by default field: rank')
         sort_field = 'rank'
 
-    print('sort field:', sort_field)
+    # return final tuple
+    to_return = (name_show, conditional_tuple_list, display_list, sort_field)
+    print('returning from parse: ', to_return)
+    return to_return
 
 
 def main():
-    test_string = "Hello and where but and poop"
-    print(test_string.split("and"))
     test_parse()
 
 
