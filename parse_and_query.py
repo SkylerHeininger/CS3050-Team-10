@@ -146,13 +146,12 @@ def parse(input_string):
         try:
             name_show = int(name_show)
         except:
-            if name_show == '*' or "ALL":
+            if name_show == '*' or 'ALL':
                 name_show = 106
+            elif name_show == '-*' or '-ALL':
+                name_show = -106
             else:
                 name_show = 'error'
-    elif is_name:
-        query_dict['where_phrase'] = str('university ==' + name_show)
-        name_show = 1
 
     if is_name:
         # if it is a name-type query, create a conditional based on the name
