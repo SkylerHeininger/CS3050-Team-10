@@ -515,3 +515,23 @@ if __name__ == "__main__":
         # Pass sorted objects to print function - don't really need to use the boolean output
         # since it will re-prompt anyways
         print_results(sorted_results, display_fields)
+
+"""
+name Columbia University display sustainability, founding_date
+show all where university == Columbia University display sustainability, founding_date
+
+show all where rank <= 10 
+show -all where rank <= 10 
+
+show 5 where rank <= 10 and country == United States
+show 5 where sustainability >= 90 display sustainability sort sustainability
+
+show -10 where faculty_student_ratio < 50 and student_population > 10000 display student_population, founding_date
+show -10 where faculty_student_ratio < 50 and student_population > 10000 display student_population, founding_date sort employment_outcomes
+
+show 10 where rank >= 95 display employment_outcomes sort employment_outcomes
+
+"""
+
+
+
